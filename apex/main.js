@@ -304,30 +304,55 @@ const itemAttributes = {
         5
     ]
 }
+const cdTimeInMs = 10000
+const blockNameToTier = { "Red Concrete Slab": 5, "Gray Concrete Slab": 1, "Blue Concrete Slab": 2, "Purple Concrete Slab": 3, "Orange Concrete Slab": 4 }
+const configOfChest = []
+chestOpenedTime = {}
 function setChest(x, y, z, tier) {
-  function clearChest() {
-    for (let i = 0; i < 36; i++) {
-      api.setStandardChestItemSlot([x, y, z], i, "Air")
-    }
-  }
-
-  reward = []
-  for (let item in itemProbability[Number(tier)]) {
-    let prob = itemProbability[Number(tier)][item]
-    if (Math.random() < prob) {
-      reward.push(item)
+    function clearChest() {
+        for (let i = 0; i < 36; i++) {
+            api.setStandardChestItemSlot([x, y, z], i, "Air")
+        }
     }
 
-  }
-  api.log(reward)
-  clearChest()
-  for (let i = 0; i < reward.length; i++) {
-    api.setStandardChestItemSlot([x, y, z], i, reward[i], 1, undefined, {
-    customDisplayName: itemAttributes[reward[i]][0],
-    customDescription: "Value:" + itemAttributes[reward[i]][1],
-    customAttributes: {
-        enchantmentTier: "Tier " + itemAttributes[reward[i]][2]
+    reward = []
+    for (let item in itemProbability[Number(tier)]) {
+        let prob = itemProbability[Number(tier)][item]
+        if (Math.random() < prob) {
+            reward.push(item)
+        }
+
     }
-})
-  }
+    api.log(reward)
+    clearChest()
+    for (let i = 0; i < reward.length; i++) {
+        api.setStandardChestItemSlot([x, y, z], i, reward[i], 1, undefined, {
+            customDisplayName: itemAttributes[reward[i]][0],
+            customDescription: "Value:" + itemAttributes[reward[i]][1],
+            customAttributes: {
+                enchantmentTier: "Tier " + itemAttributes[reward[i]][2]
+            }
+        })
+    }
+}
+function onPlayerAttemptOpenChest(id, x, y, z, isMc, isIc) {
+    let tierOfChest = blockNameToTier[api.getBlock(x, y + 1, z)]
+    if (tierOfChest & !isMc & !isIc) {
+
+        if ([x, y, z] in chestOpenedTime) {
+            let lastOpen = chestOpenedTime[[x, y, z]]
+            if (lastOpen + cdTimeInMs <= api.now()) {
+                api.sendMessage(id, "You opened a Tier " + String(tierOfChest) + "chest")
+                chestOpenedTime[[x, y, z]] = api.now()
+                setChest(x, y, z, tierOfChest)
+            } else {
+                api.sendMessage(id, "Chest in Cd")
+            }
+
+        } else {
+            api.sendMessage(id, "You opened a Tier" + String(tierOfChest) + " chest")
+            chestOpenedTime[[x, y, z]] = api.now()
+            setChest(x, y, z, tierOfChest)
+        }
+    }
 }
