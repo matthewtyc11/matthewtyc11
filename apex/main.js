@@ -1,3 +1,8 @@
+function playerCommand(id, cmd){
+let parts = cmd.split(" ")
+if (parts[0] === "effect"){
+api.applyEffect(id,parts[1],null, {inbuiltLevel: Number(parts[2])})}
+}
 const itemProbability = {
     1: {
         "Sand": 1.0,
@@ -337,8 +342,7 @@ function setChest(x, y, z, tier) {
 }
 function onPlayerAttemptOpenChest(id, x, y, z, isMc, isIc) {
     let tierOfChest = blockNameToTier[api.getBlock(x, y + 1, z)]
-    if (tierOfChest & !isMc & !isIc) {
-
+    if (tierOfChest!=undefined & !isMc & !isIc) {
         if ([x, y, z] in chestOpenedTime) {
             let lastOpen = chestOpenedTime[[x, y, z]]
             if (lastOpen + cdTimeInMs <= api.now()) {
@@ -348,11 +352,14 @@ function onPlayerAttemptOpenChest(id, x, y, z, isMc, isIc) {
             } else {
                 api.sendMessage(id, "Chest in Cd")
             }
-
         } else {
+        
             api.sendMessage(id, "You opened a Tier" + String(tierOfChest) + " chest")
             chestOpenedTime[[x, y, z]] = api.now()
             setChest(x, y, z, tierOfChest)
         }
     }
+}
+onWorldAttemptSpawnMob = () => {
+    return "preventSpawn"
 }
