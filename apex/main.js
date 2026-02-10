@@ -1,7 +1,12 @@
-function playerCommand(id, cmd){
-let parts = cmd.split(" ")
-if (parts[0] === "effect"){
-api.applyEffect(id,parts[1],null, {inbuiltLevel: Number(parts[2])})}
+function playerCommand(id, cmd) {
+    let parts = cmd.split(" ")
+    if (parts[0] === "effect") {
+        api.applyEffect(id, parts[1], null, { inbuiltLevel: Number(parts[2]) })
+    } else if (parts[0] === "killallmob") {
+        api.getMobIds().forEach(mob => {
+            api.killLifeform(mob)
+        });
+    }
 }
 const itemProbability = {
     1: {
@@ -342,7 +347,7 @@ function setChest(x, y, z, tier) {
 }
 function onPlayerAttemptOpenChest(id, x, y, z, isMc, isIc) {
     let tierOfChest = blockNameToTier[api.getBlock(x, y + 1, z)]
-    if (tierOfChest!=undefined & !isMc & !isIc) {
+    if (tierOfChest != undefined & !isMc & !isIc) {
         if ([x, y, z] in chestOpenedTime) {
             let lastOpen = chestOpenedTime[[x, y, z]]
             if (lastOpen + cdTimeInMs <= api.now()) {
@@ -353,13 +358,38 @@ function onPlayerAttemptOpenChest(id, x, y, z, isMc, isIc) {
                 api.sendMessage(id, "Chest in Cd")
             }
         } else {
-        
+
             api.sendMessage(id, "You opened a Tier" + String(tierOfChest) + " chest")
             chestOpenedTime[[x, y, z]] = api.now()
             setChest(x, y, z, tierOfChest)
         }
     }
 }
-onWorldAttemptSpawnMob = () => {
-    return "preventSpawn"
+const allowMobs = ["Wildcat", "Draugr Knight"]
+onWorldAttemptSpawnMob = (mob) => {
+    if (!allowMobs.includes(mob)) {
+        return "preventSpawn"
+    }
+}
+onWorldAttemptDespawnMob = (id) => {
+    if (!allowMobs.includes(api.getEntityName(id))){
+        return "preventDespawn"
+    }
+}
+const floatText = [{ text: "Map 1", size: 200, height: 4, color: "#00FFFF", cord: [-307.5, 45, 400.5] }]
+api.getMobIds().forEach(mob => {
+    api.killLifeform(mob)
+});
+for (let i of floatText) {
+    let wildcatId = api.attemptSpawnMob("Wildcat", i.cord[0], i.cord[1], i.cord[2], { name: "s" });
+    api.scalePlayerMeshNodes(wildcatId, { "TorsoNode": [0, i.height, 0] });
+    api.setTargetedPlayerSettingForEveryone(wildcatId, "nameTagInfo", {
+        backgroundColor: "rgba(0,0,0,0)", content: [{
+            str: i.text, style:
+            {
+                fontSize: i.size + "px", color: i.color
+            }
+        }]
+    }, true);
+    api.setMobSetting(wildcatId, "walkingSpeedMultiplier", 0); api.setMobSetting(wildcatId, "idleSound", null);
 }
