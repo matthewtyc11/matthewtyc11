@@ -372,11 +372,12 @@ onWorldAttemptSpawnMob = (mob) => {
     }
 }
 onWorldAttemptDespawnMob = (id) => {
-    if (!allowMobs.includes(api.getEntityName(id))){
+    if (!allowMobs.includes(api.getEntityName(id))) {
         return "preventDespawn"
     }
 }
-const floatText = [{ text: "Map 1", size: 200, height: 4, color: "#00FFFF", cord: [-307.5, 45, 400.5] }]
+const floatText = [{ text: "Map 1", size: 200, height: 4, color: "#00FFFF", cord: [-307.5, 45, 400.5] },
+{ text: "Shop", size: 200, height: 4, color: "#0000FF", cord: [-255.5, 44, 412.5] }]
 api.getMobIds().forEach(mob => {
     api.killLifeform(mob)
 });
@@ -392,4 +393,8 @@ for (let i of floatText) {
         }]
     }, true);
     api.setMobSetting(wildcatId, "walkingSpeedMultiplier", 0); api.setMobSetting(wildcatId, "idleSound", null);
+}
+const lobbyCord = [-268.5, 50, 412.5]
+function tpLobby(id) {
+    api.setPosition(id, lobbyCord)
 }
