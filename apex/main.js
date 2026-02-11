@@ -1,3 +1,4 @@
+let isNewLobby = true
 function playerCommand(id, cmd) {
     let parts = cmd.split(" ")
     if (parts[0] === "effect") {
@@ -318,6 +319,10 @@ const cdTimeInMs = 10000
 const blockNameToTier = { "Red Concrete Slab": 5, "Gray Concrete Slab": 1, "Blue Concrete Slab": 2, "Purple Concrete Slab": 3, "Orange Concrete Slab": 4 }
 const configOfChest = []
 chestOpenedTime = {}
+const lobbyCord = [-268.5, 50, 412.5]
+function tpLobby(id) {
+    api.setPosition(id, lobbyCord)
+}
 function setChest(x, y, z, tier) {
     function clearChest() {
         for (let i = 0; i < 36; i++) {
@@ -376,25 +381,26 @@ onWorldAttemptDespawnMob = (id) => {
         return "preventDespawn"
     }
 }
-const floatText = [{ text: "Map 1", size: 200, height: 4, color: "#00FFFF", cord: [-307.5, 45, 400.5] },
-{ text: "Shop", size: 200, height: 4, color: "#0000FF", cord: [-255.5, 44, 412.5] }]
-api.getMobIds().forEach(mob => {
-    api.killLifeform(mob)
-});
-for (let i of floatText) {
-    let wildcatId = api.attemptSpawnMob("Wildcat", i.cord[0], i.cord[1], i.cord[2], { name: "s" });
-    api.scalePlayerMeshNodes(wildcatId, { "TorsoNode": [0, i.height, 0] });
-    api.setTargetedPlayerSettingForEveryone(wildcatId, "nameTagInfo", {
-        backgroundColor: "rgba(0,0,0,0)", content: [{
-            str: i.text, style:
-            {
-                fontSize: i.size + "px", color: i.color
-            }
-        }]
-    }, true);
-    api.setMobSetting(wildcatId, "walkingSpeedMultiplier", 0); api.setMobSetting(wildcatId, "idleSound", null);
-}
-const lobbyCord = [-268.5, 50, 412.5]
-function tpLobby(id) {
-    api.setPosition(id, lobbyCord)
+function onPlayerJoin(id) {
+    if (isNewLobby) {
+        isNewLobby = false
+        const floatText = [{ text: "Map 1", size: 200, height: 4, color: "#00FFFF", cord: [-307.5, 45, 400.5] },
+        { text: "Shop", size: 200, height: 4, color: "#0000FF", cord: [-255.5, 44, 412.5] }]
+        api.getMobIds().forEach(mob => {
+            api.killLifeform(mob)
+        });
+        for (let i of floatText) {
+            let wildcatId = api.attemptSpawnMob("Wildcat", i.cord[0], i.cord[1], i.cord[2], { name: "s" });
+            api.scalePlayerMeshNodes(wildcatId, { "TorsoNode": [0, i.height, 0] });
+            api.setTargetedPlayerSettingForEveryone(wildcatId, "nameTagInfo", {
+                backgroundColor: "rgba(0,0,0,0)", content: [{
+                    str: i.text, style:
+                    {
+                        fontSize: i.size + "px", color: i.color
+                    }
+                }]
+            }, true);
+            api.setMobSetting(wildcatId, "walkingSpeedMultiplier", 0); api.setMobSetting(wildcatId, "idleSound", null);
+        }
+    }
 }
