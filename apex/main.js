@@ -7,8 +7,11 @@ function playerCommand(id, cmd) {
         api.getMobIds().forEach(mob => {
             api.killLifeform(mob)
         });
+    } else if (parts[0] === "kill") {
+        api.killLifeform(api.getPlayerId(parts[[1]]))
     }
 }
+api.setCallbackValueFallback("onWorldAttemptSpawnMob", "preventSpawn")
 const itemProbability = {
     1: {
         "Sand": 1.0,
