@@ -10,6 +10,6 @@ for (let i of floatText) {
             }
         }]
     }, true);
-    api.setMobSetting(wildcatId, "walkingSpeedMultiplier", 0); api.setMobSetting(wildcatId, "idleSound", null);
+    api.setMobSetting(wildcatId, "walkingSpeedMultiplier", 0); 
+    api.setMobSetting(wildcatId, "idleSound", null);
 }
-

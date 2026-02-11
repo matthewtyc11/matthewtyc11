@@ -1,14 +1,30 @@
 let isNewLobby = true
+const admins = ["MattDragon64", "Chrishellnah", "CN_Coolwind"]
 function playerCommand(id, cmd) {
     let parts = cmd.split(" ")
-    if (parts[0] === "effect") {
+    if (parts[0] === "effect" & admins.includes(api.getEntityName(id))) {
         api.applyEffect(id, parts[1], null, { inbuiltLevel: Number(parts[2]) })
-    } else if (parts[0] === "killallmob") {
+    } else if (parts[0] === "killallmob" & admins.includes(api.getEntityName(id))) {
         api.getMobIds().forEach(mob => {
             api.killLifeform(mob)
         });
-    } else if (parts[0] === "kill") {
+    } else if (parts[0] === "kill" & admins.includes(api.getEntityName(id))) {
         api.killLifeform(api.getPlayerId(parts[[1]]))
+    } else if (parts[0] === "adminarmour" & admins.includes(api.getEntityName(id))) {
+        const armours = ["Diamond Helmet", "Diamond Chestplate", "Diamond Leggings", "Diamond Boots", "Diamond Gauntlets"]
+        armours.forEach(armour => {
+            api.giveItem(id, armour, 1, {
+                customDisplayName: "Tier 6",
+                customDescription: "Admin level armour",
+                customAttributes: {
+                    enchantmentTier: "Tier 5",
+                    enchantments: {
+                        "Health": 1000000, "Health Regen": 1000000
+                    }
+                }
+            })
+        });
+
     }
 }
 api.setCallbackValueFallback("onWorldAttemptSpawnMob", "preventSpawn")
