@@ -1,9 +1,15 @@
 //1
 api.setPosition(myId, 127.5, 2, 59.5)
-api.removeEffect(myId,"Speed")
+api.removeEffect(myId, "Speed")
+api.setHealth(myId, 10000000)
 //2
-api.setPosition(myId, 37.5,18,73.5)
-api.removeEffect(myId,"Speed")
+api.setPosition(myId, 37.5, 18, 73.5)
+api.removeEffect(myId, "Speed")
+api.setHealth(myId, 10000000)
 //3
-api.setPosition(myId, 72.5,24,77.5)
-api.removeEffect(myId,"Speed")
+api.setPosition(myId, 72.5, 24, 77.5)
+api.removeEffect(myId, "Speed")
+api.setHealth(myId, 10000000)
+
+
+
