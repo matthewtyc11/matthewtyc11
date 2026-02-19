@@ -1,14 +1,12 @@
-const prob = 1
-const tier = 1
-const value = 1
-const names = ""
-const cord = [-9, 1, 14]
-let item = api.getStandardChestItemSlot(cord, 0)
-api.log(item)
-api.setStandardChestItemSlot(cord, 0, item["name"], 1, undefined, {
-    customDisplayName: names,
-    customDescription: "Value:" + value + " Prob:" + prob,
+const item = "Gold Spade";
+const customDisplayName = "";
+const customDescription = "";
+const tier = 0
+
+const customItem = api.giveItem(myId, item, 1, {
+    customDisplayName: customDisplayName || undefined,
+    customDescription: customDescription || undefined,
     customAttributes: {
-        enchantmentTier: "Tier " + tier
+        enchantmentTier: tier !== 0 ? "Tier " + tier : undefined
     }
-})
+});
