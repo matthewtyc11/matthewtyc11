@@ -1,7 +1,7 @@
 isNewLobby = true
 canSpawnBoss1 = false
 boss1Reward = false
-const admins = ["MattDragon64", "Chrishellnah", "CN_Coolwind", "Cantplaylol"]
+admins = ["MattDragon64", "Chrishellnah", "CN_Coolwind", "Cantplaylol"]
 const tpCmd = { "japan": [310, 2, -200], "adminroom": [-2, 5, 0], "oldlobby": [-127, 2, 138], "train": [-111, 9, 51], "boss": [41, 24, 82], "map1": [84, 2, 37] }
 const cmdBlockStorePos = { itemProbability: [-7, 5, -7], itemAttributes: [-7, 5, -5] }
 function onPlayerJoin(id) {
@@ -16,33 +16,23 @@ function onPlayerJoin(id) {
             lastPosition: item?.attributes?.customAttributes?.lastPosition || [-268.5, 50, 412.5]
         }
     })
-    if (isNewLobby) {
-        api.setMoonstoneChestItemSlot(id, 5, "Code Block", 1, {
-            customDisplayName: "Data Store",
-            customDescription: "Stores user data",
-            customAttributes: {
-                lastPosition: api.getPosition(id)
-            }
-        })
-        api.setPosition(id, 0.5, 5, 6.5)
-        const floatText = [{ text: "Map 1", size: 200, height: 4, color: "#00FFFF", cord: [-307.5, 45, 400.5] },
-        { text: "Shop", size: 200, height: 4, color: "#0000FF", cord: [-255.5, 44, 412.5] }]
-        api.getMobIds().forEach(mob => {
-            api.killLifeform(mob)
-        });
-        for (let i of floatText) {
-            let wildcatId = api.attemptSpawnMob("Wildcat", i.cord[0], i.cord[1], i.cord[2], { spawnerId: api.getPlayerIds()[0] });
-            api.scalePlayerMeshNodes(wildcatId, { "TorsoNode": [0, i.height, 0] });
-            api.setTargetedPlayerSettingForEveryone(wildcatId, "nameTagInfo", {
-                backgroundColor: "rgba(0,0,0,0)", content: [{
-                    str: i.text, style:
-                    {
-                        fontSize: i.size + "px", color: i.color
-                    }
-                }]
-            }, true);
-            api.setMobSetting(wildcatId, "walkingSpeedMultiplier", 0); api.setMobSetting(wildcatId, "idleSound", null);
+    if (!isNewLobby) {
+        let plrPos = api.getPosition(id)
+        if (isInside([-186, 499], [-358, 327], [plrPos[0], plrPos[2]])) {
+            api.applyEffect(id, "Speed", null, { inbuiltLevel: 3 })
         }
+    }
+    if (isNewLobby) {
+        let plrPos = api.getPosition(id)
+        if (!(plrPos[0] < 2 && plrPos[0] > -1 && plrPos[1] < 7 && plrPos[1] >= 5 && plrPos[2] < 8 && plrPos[2] > 5))
+            api.setMoonstoneChestItemSlot(id, 5, "Code Block", 1, {
+                customDisplayName: "Data Store",
+                customDescription: "Stores user data",
+                customAttributes: {
+                    lastPosition: api.getPosition(id)
+                }
+            })
+        api.setPosition(id, 0.5, 5, 6.5)
     }
 }
 function playerCommand(id, cmd) {
@@ -98,40 +88,18 @@ const lobbyCord = [-268.5, 50, 412.5]
 function tpLobby(id) {
     api.setPosition(id, lobbyCord)
 }
-function getMobNames() {
-    let mobNames = []
-    for (let id of api.getMobIds()) {
-        mobNames.push(api.getEntityType(id))
-    }
-    return mobNames
-}
-function setChest(x, y, z, tier) {
-    function clearChest() {
-        for (let i = 0; i < 36; i++) {
-            api.setStandardChestItemSlot([x, y, z], i, "Air")
-        }
-    }
 
-    reward = []
-    for (let item in itemProbability[Number(tier)]) {
-        let prob = itemProbability[Number(tier)][item]
-        if (Math.random() < prob) {
-            reward.push(item)
-        }
-
-    }
-    api.log(reward)
-    clearChest()
-    for (let i = 0; i < reward.length; i++) {
-        api.setStandardChestItemSlot([x, y, z], i, reward[i], 1, undefined, {
-            customDisplayName: itemAttributes[reward[i]][0],
-            customDescription: "Value:" + itemAttributes[reward[i]][1],
-            customAttributes: {
-                enchantmentTier: "Tier " + itemAttributes[reward[i]][2]
-            }
-        })
+onPlayerMoveInvenItem = (playerId, fromIdx, toStartIdx, toEndIdx, amt) => {
+    if (api.getItemSlot(playerId, fromIdx).attributes.customDisplayName === "Data Store") {
+        return "preventChange"
     }
 }
+onPlayerDropItem = (playerId, x, y, z, itemName, itemAmount, fromIdx) => {
+    if (api.getItemSlot(playerId, fromIdx).attributes.customDisplayName === "Data Store") {
+        return "preventDrop"
+    }
+}
+
 function onPlayerAttemptOpenChest(id, x, y, z, isMc, isIc) {
     let tierOfChest = blockNameToTier[api.getBlock(x, y + 1, z)]
     if (tierOfChest != undefined & !isMc & !isIc) {
@@ -162,7 +130,7 @@ onWorldAttemptDespawnMob = (id) => {
 
 let lastSec = api.now()
 function tick() {
-    if (api.now() >= lastSec + 400 && getMobNames().includes("Draugr Knight")) {
+    if (api.now() >= lastSec + 400 && !isNewLobby && getMobNames().includes("Draugr Knight")) {
         lastSec = api.now()
         let plrIds = api.getPlayerIds()
         for (let id of plrIds) {
@@ -172,19 +140,6 @@ function tick() {
             }
         }
     }
-    /*
-    if (!isNewLobby) {
-        for (let id of api.getPlayerIds()) {
-            if (api.getMoonstoneChestItemSlot(id, 5).attributes.customAttributes.lastPosition !== api.getPosition(id))
-                api.setMoonstoneChestItemSlot(id, 5, "Code Block", 1, {
-                    customDisplayName: "Data Store",
-                    customDescription: "Stores user data",
-                    customAttributes: {
-                        lastPosition: api.getPosition(id) || [-268.5, 50, 412.5]
-                    }
-                })
-        }
-    }*/
 }
 function onPlayerAttemptAltAction(id) {
 

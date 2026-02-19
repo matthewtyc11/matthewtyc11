@@ -75,13 +75,71 @@ function sendBossHealthBar(playerId, currentHp, maxHp, name, activeBar, deadBar,
     }
     ], 0, timeInMs)
 }
+function getMobNames() {
+    let mobNames = []
+    for (let id of api.getMobIds()) {
+        mobNames.push(api.getEntityType(id))
+    }
+    return mobNames
+}
+function setChest(x, y, z, tier) {
+    function clearChest() {
+        for (let i = 0; i < 36; i++) {
+            api.setStandardChestItemSlot([x, y, z], i, "Air")
+        }
+    }
 
+    reward = []
+    for (let item in itemProbability[Number(tier)]) {
+        let prob = itemProbability[Number(tier)][item]
+        if (Math.random() < prob) {
+            reward.push(item)
+        }
+
+    }
+    api.log(reward)
+    clearChest()
+    for (let i = 0; i < reward.length; i++) {
+        api.setStandardChestItemSlot([x, y, z], i, reward[i], 1, undefined, {
+            customDisplayName: itemAttributes[reward[i]][0],
+            customDescription: "Value:" + itemAttributes[reward[i]][1],
+            customAttributes: {
+                enchantmentTier: "Tier " + itemAttributes[reward[i]][2]
+            }
+        })
+    }
+}
 const cmdBlockStorePos = { itemProbability: [-7, 5, -7], itemAttributes: [-7, 5, -5] }
 for (let key in cmdBlockStorePos) {
     let dictItem = cmdBlockStorePos[key]
     let text = api.getBlockData(dictItem[0], dictItem[1], dictItem[2]).persisted.shared.text
     eval(key + " = " + text)
 }
+const floatText = [{ text: "Map 1", size: 200, height: 4, color: "#00FFFF", cord: [-307.5, 45, 400.5] },
+{ text: "Shop", size: 200, height: 4, color: "#0000FF", cord: [-255.5, 44, 412.5] }]
+api.getMobIds().forEach(mob => {
+    api.killLifeform(mob)
+});
+for (let i of floatText) {
+    let wildcatId = api.attemptSpawnMob("Wildcat", i.cord[0], i.cord[1], i.cord[2], { spawnerId: api.getPlayerIds()[0] });
+    api.scalePlayerMeshNodes(wildcatId, { "TorsoNode": [0, i.height, 0] });
+    api.setTargetedPlayerSettingForEveryone(wildcatId, "nameTagInfo", {
+        backgroundColor: "rgba(0,0,0,0)", content: [{
+            str: i.text, style:
+            {
+                fontSize: i.size + "px", color: i.color
+            }
+        }]
+    }, true);
+    api.setMobSetting(wildcatId, "walkingSpeedMultiplier", 0); api.setMobSetting(wildcatId, "idleSound", null);
+}
+isInside = (a, b, p) => p.every((v, i) => v >= Math.min(a[i], b[i]) && v <= Math.max(a[i], b[i]));
 
 isNewLobby = false
-api.setPosition(myId, api.getMoonstoneChestItemSlot(myId, 5).attributes.customAttributes.lastPosition)
+for (let id of api.getPlayerIds()) {
+    let lastPos = api.getMoonstoneChestItemSlot(id, 5).attributes.customAttributes.lastPosition
+    api.setPosition(id, lastPos)
+    if (isInside([-186, 499], [-358, 327], [lastPos[0], lastPos[2]])) {
+        api.applyEffect(id, "Speed", null, { inbuiltLevel: 3 })
+    }
+}
