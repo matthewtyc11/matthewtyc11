@@ -17,12 +17,14 @@ function onPlayerJoin(id) {
         }
     })
     if (!isNewLobby) {
+        api.setClientOption(id, "invincible", false)
         let plrPos = api.getPosition(id)
         if (isInside([-186, 499], [-358, 327], [plrPos[0], plrPos[2]])) {
             api.applyEffect(id, "Speed", null, { inbuiltLevel: 3 })
         }
     }
     if (isNewLobby) {
+        api.setClientOption(id, "invincible", true)
         let plrPos = api.getPosition(id)
         if (!(plrPos[0] < 2 && plrPos[0] > -1 && plrPos[1] < 7 && plrPos[1] >= 5 && plrPos[2] < 8 && plrPos[2] > 5))
             api.setMoonstoneChestItemSlot(id, 5, "Code Block", 1, {
