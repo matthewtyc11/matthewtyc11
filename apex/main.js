@@ -144,7 +144,6 @@ function tick() {
     }
 }
 function onPlayerAttemptAltAction(id) {
-
     if (api.getHeldItem(id)?.name == "Gold Spade" && api.getHeldItem(id)?.attributes.customDisplayName == "Totem Of Undying" && api.getEffects(id).includes("Totem") == false) {
         /* ---apply totem effect--- */
         api.applyEffect(id, "Totem", null, { icon: "Gold Spade" })
@@ -153,7 +152,6 @@ function onPlayerAttemptAltAction(id) {
     }
 }
 function onPlayerDamagingOtherPlayer(attacker, victim, dmg) {
-
     if (api.getHeldItem(victim)?.attributes.customDisplayName === "Totem Of Undying" && api.getHealth(victim) - dmg < 5 || api.getEffects(victim).includes('Totem')
         && api.getHealth(victim) - dmg < 5) {
         totemWork(victim)
@@ -161,10 +159,15 @@ function onPlayerDamagingOtherPlayer(attacker, victim, dmg) {
 }
 
 function onMobDamagingPlayer(attacker, victim, dmg) {
-
     if (api.getHeldItem(victim)?.attributes.customDisplayName === "Totem Of Undying" && api.getHealth(victim) - dmg < 5 || api.getEffects(victim).includes('Totem')
         && api.getHealth(victim) - dmg < 5) {
         totemWork(victim)
+    }
+}
+
+function onPlayerKilledMob(id, mobId) {
+    if (api.getEntityType(mobId) === "Draugr Knight") {
+        return "preventDrop"
     }
 }
 

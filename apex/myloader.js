@@ -101,7 +101,7 @@ if (isNewLobby) {
         eval(key + " = " + text)
     }
     const floatText = [{ text: "Map 1", size: 200, height: 4, color: "#00FFFF", cord: [-307.5, 45, 400.5] },
-    { text: "Shop", size: 200, height: 4, color: "#0000FF", cord: [-255.5, 44, 412.5] }]
+    { text: "Shop", size: 200, height: 4, color: "#0000FF", cord: [-255.5, 44, 412.5] }, { text: "Map 2", size: 200, height: 4, color: "#FF0000", cord: [-308.5, 45, 406.5] }]
     api.getMobIds().forEach(mob => {
         api.killLifeform(mob)
     });
