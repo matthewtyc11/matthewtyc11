@@ -8,6 +8,7 @@ function onPlayerJoin(id) {
     if (!admins.includes(api.getEntityName(id))) {
         api.kickPlayer(id, "Lobby not open yet! You can join after the game is complete.")
     }
+    api.setClientOption(id, "canCraft", false)
     const item = api.getMoonstoneChestItemSlot(id, 5)
     api.setMoonstoneChestItemSlot(id, 5, "Code Block", 1, {
         customDisplayName: "Data Store",
@@ -37,11 +38,45 @@ function onPlayerJoin(id) {
         api.setPosition(id, 0.5, 5, 6.5)
     }
 }
+function onPlayerChat(id, cmd) {
+    if (isNewLobby){return}
+    let parts = cmd.split(" ")
+    if (parts[0] === "!lobby" && api.getPosition(id)[1] < -8) {
+        api.setPosition(id, 0, -10, 0)
+    }
+    if (parts[0] === "!room") {
+        let myRoom = loadData(0).data[api.getPlayerDbId(id)]
+        if (parts[1] === undefined) {
+            if (myRoom) {
+                api.sendMessage(id, "The room you own:\n" + myRoom)
+                return false
+            } else {
+                api.sendMessage(id, "You don't have any room.")
+                return false
+            }
+        }
+        if (myRoom && myRoom.length > 1) {
+            if (myRoom.includes(Number(parts[1]))) {
+                let data = loadData(0)
+                data.roomChoose[api.getPlayerDbId(id)] = Number(parts[1])
+                saveData(data, 0)
+            } else {
+                api.sendMessage(id, "You do not own this room.\nThe room you own\n" + myRoom, { color: "red" })
+            }
+        } else {
+            api.sendMessage(id, "You need to own at least 2 storage room.")
+        }
+    }
+    if (cmd[0] === "!") {
+        return false
+    }
+}
 function playerCommand(id, cmd) {
+    if (isNewLobby){return}
+    let parts = cmd.split(" ")
     if (!admins.includes(api.getEntityName(id))) {
         return
     }
-    let parts = cmd.split(" ")
     if (parts[0] === "effect") {
         api.applyEffect(id, parts[1], null, { inbuiltLevel: Number(parts[2]) })
     } else if (parts[0] === "killallmob") {

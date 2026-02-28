@@ -94,14 +94,12 @@ if (isNewLobby) {
             })
         }
     }
-    const cmdBlockStorePos = { itemProbability: [-7, 5, -7], itemAttributes: [-7, 5, -5] }
+    const cmdBlockStorePos = { itemProbability: [-7, 5, -7], itemAttributes: [-7, 5, -5], floatText: [-7, 5, -3] }
     for (let key in cmdBlockStorePos) {
         let dictItem = cmdBlockStorePos[key]
         let text = api.getBlockData(dictItem[0], dictItem[1], dictItem[2]).persisted.shared.text
         eval(key + " = " + text)
     }
-    const floatText = [{ text: "Map 1", size: 200, height: 4, color: "#00FFFF", cord: [-307.5, 45, 400.5] },
-    { text: "Shop", size: 200, height: 4, color: "#0000FF", cord: [-255.5, 44, 412.5] }, { text: "Map 2", size: 200, height: 4, color: "#FF0000", cord: [-308.5, 45, 406.5] }]
     api.getMobIds().forEach(mob => {
         api.killLifeform(mob)
     });
@@ -121,19 +119,20 @@ if (isNewLobby) {
     isInside = (a, b, p) => p.every((v, i) => v >= Math.min(a[i], b[i]) && v <= Math.max(a[i], b[i]));
 
     isNewLobby = false
+    buyRoomCd = api.now()
     for (let id of api.getPlayerIds()) {
         api.setClientOption(id, "invincible", false)
         let lastPos = api.getMoonstoneChestItemSlot(id, 5).attributes.customAttributes.lastPosition
         api.setPosition(id, lastPos)
-        if (isInside([-186, 499], [-358, 327], [lastPos[0], lastPos[2]])) {
-            api.applyEffect(id, "Speed", null, { inbuiltLevel: 3 })
+        if (isInside([-186, 499], [-358, 327], [lastPos[0], lastPos[2]]) || lastPos[1] < -8) {
+            api.applyEffect(id, "Speed", null, { inbuiltLevel: 5 })
         }
     }
 } else {
     api.setClientOption(myId, "invincible", false)
     let lastPos = api.getMoonstoneChestItemSlot(myId, 5).attributes.customAttributes.lastPosition
     api.setPosition(myId, lastPos)
-    if (isInside([-186, 499], [-358, 327], [lastPos[0], lastPos[2]])) {
-        api.applyEffect(myId, "Speed", null, { inbuiltLevel: 3 })
+    if (isInside([-186, 499], [-358, 327], [lastPos[0], lastPos[2]] || lastPos[1] < -8)) {
+        api.applyEffect(myId, "Speed", null, { inbuiltLevel: 5 })
     }
 }
