@@ -9,4 +9,3 @@ function loadData(slot) {
     if (!data || !data.attributes || !data.attributes.customDisplayName) { return null; }
     return JSON.parse(data.attributes.customDisplayName);
 }
-api.broadcastMessage("Game Started",{color:"green"})
