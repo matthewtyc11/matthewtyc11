@@ -67,7 +67,7 @@ if (isNewLobby) {
         return mobNames
     }
 
-    function setChest(x, y, z, tier) {
+    function setChest(x, y, z, tier,id) {
         function clearChest() {
             for (let i = 0; i < 36; i++) {
                 api.setStandardChestItemSlot([x, y, z], i, "Air")
@@ -82,7 +82,7 @@ if (isNewLobby) {
             }
 
         }
-        api.log(reward)
+        api.sendMessage(id,reward)
         clearChest()
         for (let i = 0; i < reward.length; i++) {
             api.setStandardChestItemSlot([x, y, z], i, reward[i], 1, undefined, {

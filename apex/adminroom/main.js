@@ -1,13 +1,14 @@
 isNewLobby = true
 canSpawnBoss1 = false
 boss1Reward = false
-admins = ["MattDragon64", "Chrishellnah", "CN_Coolwind", "Cantplaylol"]
-const tpCmd = { "japan": [310, 2, -200], "adminroom": [-2, 5, 0], "oldlobby": [-127, 2, 138], "train": [-111, 9, 51], "boss": [41, 24, 82], "map1": [84, 2, 37] }
+admins = ["MattDragon64", "Chrishellnah", "CN_Coolwind", "Cantplaylol", "Shine_Star_Light"]
+betaPlayers = [""]
 const cmdBlockStorePos = { itemProbability: [-7, 5, -7], itemAttributes: [-7, 5, -5] }
 function onPlayerJoin(id) {
-    if (!admins.includes(api.getEntityName(id))) {
+    if (!(admins.includes(api.getEntityName(id)) || betaPlayers.includes(api.getEntityName(id)))) {
         api.kickPlayer(id, "Lobby not open yet! You can join after the game is complete.")
     }
+    api.broadcastMessage([{ str: "[Bloxd-Loot-Fight] ", style: { color: "gold" } }, { str: api.getEntityName(id), style: { color: "Cyan" } }, { str: " Hi!", style: { color: "Lime" } }])
     api.setClientOption(id, "canCraft", false)
     const item = api.getMoonstoneChestItemSlot(id, 5)
     api.setMoonstoneChestItemSlot(id, 5, "Code Block", 1, {
@@ -17,11 +18,27 @@ function onPlayerJoin(id) {
             lastPosition: item?.attributes?.customAttributes?.lastPosition || [-268.5, 50, 412.5]
         }
     })
+    tpCmd = { "japan": [310, 2, -200], "adminroom": [-2, 5, 0], "oldlobby": [-127, 2, 138], "train": [-111, 9, 51], "boss": [41, 24, 82], "map1": [84, 2, 37], "storage": [0, -10, 0], "spawn": [-268.5, 50, 412.5], "shop": [-255, 46, 412], "lobby outside": [-284, 46, 412] }
+    if (admins.includes(api.getEntityName(id))) {
+        api.configureShopCategoryForPlayer(id, 'tp', {
+            autoSelectCategory: true,
+            customTitle: 'Warp',
+            sortPriority: 200,
+        });
+        for (const place in tpCmd) {
+            api.createShopItemForPlayer(id, 'tp', place, {
+                image: 'tprequesticon.png',
+                buyButtonText: "TP",
+                customTitle: place,
+                description: "Tp to here"
+            });
+        }
+    }
     if (!isNewLobby) {
         api.setClientOption(id, "invincible", false)
         let plrPos = api.getPosition(id)
-        if (isInside([-186, 499], [-358, 327], [plrPos[0], plrPos[2]])) {
-            api.applyEffect(id, "Speed", null, { inbuiltLevel: 3 })
+        if (isInsideLobby(plrPos)) {
+            api.applyEffect(id, "Speed", null, { inbuiltLevel: 5 })
         }
     }
     if (isNewLobby) {
@@ -39,7 +56,7 @@ function onPlayerJoin(id) {
     }
 }
 function onPlayerChat(id, cmd) {
-    if (isNewLobby){return}
+    if (isNewLobby) { return }
     let parts = cmd.split(" ")
     if (parts[0] === "!lobby" && api.getPosition(id)[1] < -8) {
         api.setPosition(id, 0, -10, 0)
@@ -72,7 +89,7 @@ function onPlayerChat(id, cmd) {
     }
 }
 function playerCommand(id, cmd) {
-    if (isNewLobby){return}
+    if (isNewLobby) { return }
     let parts = cmd.split(" ")
     if (!admins.includes(api.getEntityName(id))) {
         return
@@ -143,9 +160,9 @@ function onPlayerAttemptOpenChest(id, x, y, z, isMc, isIc) {
         if ([x, y, z] in chestOpenedTime) {
             let lastOpen = chestOpenedTime[[x, y, z]]
             if (lastOpen + cdTimeInMs <= api.now()) {
-                api.sendMessage(id, "You opened a Tier " + String(tierOfChest) + "chest")
+                api.sendMessage(id, "You opened a Tier " + String(tierOfChest) + " chest")
                 chestOpenedTime[[x, y, z]] = api.now()
-                setChest(x, y, z, tierOfChest)
+                setChest(x, y, z, tierOfChest, id)
             } else {
                 api.sendMessage(id, "Chest in Cd")
             }
@@ -209,13 +226,25 @@ function onPlayerKilledMob(id, mobId) {
 onPlayerFinishChargingItem = (id, isUsed, item) => {
     if (isUsed && item === "Apple") {
 
-        api.applyEffect(id, "Health Regen", 20000, { inbuiltLevel: 25 })
-        api.applyEffect(id, "Damage", 15000, { inbuiltLevel: 50 })
-        api.applyEffect(id, "Damage Reduction", 10000, { inbuiltLevel: 30 })
+        api.applyEffect(id, "Health Regen", 15000, { inbuiltLevel: 15 })
+        api.applyEffect(id, "Damage", 15000, { inbuiltLevel: 30 })
+        api.applyEffect(id, "Damage Reduction", 10000, { inbuiltLevel: 20 })
         api.setShieldAmount(id, 100)
         const oldHealth = api.getHealth(id)
         if (oldHealth < 700) {
-            api.setHealth(id, oldHealth + 200, undefined, true)
+            api.setHealth(id, oldHealth + 100, undefined, true)
         }
+    }
+}
+onPlayerBoughtShopItem = (id, categoryKey, itemKey, item, textInput) => {
+    if (categoryKey === "tp") {
+        api.setPosition(id, tpCmd[itemKey])
+    }
+};
+function onPlayerAltAction(id) {
+    if (api.getHeldItem(id)?.attributes.customDisplayName == 'Dragon Sword' && api.getHeldItem(Id)?.name == 'Knight Sword') {
+        api.applyEffect(id, "Damage", 5000, { inbuiltLevel: 30 })
+        api.applyEffect(id, "Speed", 5000, { inbuiltLevel: 3 })
+        api.applyEffect(id, "Damage Reduction", 5000, { inbuiltLevel: 30 })
     }
 }
