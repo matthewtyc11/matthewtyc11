@@ -1,7 +1,7 @@
 if (isNewLobby) {
-
+    //load and save data function
     eval(api.getBlockData(-7, 5, -1).persisted.shared.text)
-
+    //call when totem work
     function totemWork(victim) {
         const pos = api.getPosition(victim);
         api.applyEffect(victim, 'Health Regen', 5000, { inbuiltLevel: 1 });
@@ -16,7 +16,6 @@ if (isNewLobby) {
         }
         else { api.removeEffect(victim, 'Totem'); }
     }
-
     function particle(x, y, z) {
         y += 1;
         api.playParticleEffect({
@@ -33,6 +32,7 @@ if (isNewLobby) {
             blendMode: 1
         });
     }
+    //boss hp bar
     function sendBossHealthBar(playerId, currentHp, maxHp, name, activeBar, deadBar, timeInMs) {
         let green = Math.floor(currentHp / maxHp * 16)
         if (currentHp > 0 && green === 0) green = 1
@@ -69,7 +69,6 @@ if (isNewLobby) {
         })
         return mobNames
     }
-
     function setChest(x, y, z, tier) {
         function clearChest() {
             for (let i = 0; i < 36; i++) {
@@ -120,6 +119,34 @@ if (isNewLobby) {
         }, true);
         api.setMobSetting(wildcatId, "walkingSpeedMultiplier", 0); api.setMobSetting(wildcatId, "idleSound", null);
     }
+    function loadAdminConsole(id) {
+        api.configureShopCategoryForPlayer(id, "admin", {
+            autoSelectCategory: true,
+            customTitle: "Admin Tools",
+            sortPriority: 200,
+        })
+        api.createShopItemForPlayer(id, "admin", "tp", {
+            image: "tprequesticon.png",
+            buyButtonText: "Tp",
+            customTitle: "Tp without request",
+            description: "Tp to this player",
+            userInput: { type: "player" }
+        });
+        api.createShopItemForPlayer(id, "admin", "kill", {
+            image: "selectPlayerIcon.png",
+            buyButtonText: "Kill",
+            customTitle: "Kill this player",
+            description: "Die instantly",
+            userInput: { type: "player" }
+        })
+        api.createShopItemForPlayer(id, "admin", "kick", {
+            image: "selectPlayerIcon.png",
+            buyButtonText: "Kick",
+            customTitle: "Be kicked instantly",
+            description: "Kick this player",
+            userInput: { type: "player" }
+        })
+    }
     isInside = (a, b, p) => p.every((v, i) => v >= Math.min(a[i], b[i]) && v <= Math.max(a[i], b[i]));
     isInsideLobby = (plrPos) => (isInside([-186, 499], [-358, 327], [plrPos[0], plrPos[2]]) || plrPos[1] < -8);
     isNewLobby = false
@@ -128,17 +155,12 @@ if (isNewLobby) {
         api.setClientOption(id, "invincible", false)
         let lastPos = api.getMoonstoneChestItemSlot(id, 5).attributes.customAttributes.lastPosition
         api.setPosition(id, lastPos)
-        if (isInsideLobby(lastPos)) {
-            api.applyEffect(id, "Speed", null, { inbuiltLevel: 5 })
+        if (admins.includes(api.getEntityName(id))) {
+            loadAdminConsole(id)
         }
     }
-
-
 } else {
     api.setClientOption(myId, "invincible", false)
     let lastPos = api.getMoonstoneChestItemSlot(myId, 5).attributes.customAttributes.lastPosition
     api.setPosition(myId, lastPos)
-    if (isInsideLobby(lastPos)) {
-        api.applyEffect(myId, "Speed", null, { inbuiltLevel: 5 })
-    }
 }

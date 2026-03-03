@@ -36,9 +36,8 @@ function onPlayerJoin(id) {
     }
     if (!isNewLobby) {
         api.setClientOption(id, "invincible", false)
-        let plrPos = api.getPosition(id)
-        if (isInsideLobby(plrPos)) {
-            api.applyEffect(id, "Speed", null, { inbuiltLevel: 5 })
+        if (admins.includes(api.getEntityName(id))) {
+            loadAdminConsole(id)
         }
     }
     if (isNewLobby) {
@@ -194,6 +193,13 @@ function tick() {
             }
         }
     }
+    if (!isNewLobby) {
+        for (let plr of api.getPlayerIds()) {
+            if (isInsideLobby(api.getPosition(plr)) && !api.getEffects(plr).includes("Speed")) {
+                api.applyEffect(plr, "Speed", null, { inbuiltLevel: 5 })
+            }
+        }
+    }
 }
 function onPlayerAttemptAltAction(id) {
     if (api.getHeldItem(id)?.name == "Gold Spade" && api.getHeldItem(id)?.attributes.customDisplayName == "Totem Of Undying" && api.getEffects(id).includes("Totem") == false) {
@@ -240,9 +246,18 @@ onPlayerBoughtShopItem = (id, categoryKey, itemKey, item, textInput) => {
     if (categoryKey === "tp") {
         api.setPosition(id, tpCmd[itemKey])
     }
+    if (categoryKey === "admin") {
+        if (itemKey === "tp") {
+            api.setPosition(id, api.getPosition(textInput))
+        } else if (itemKey === "kill") {
+            api.killLifeform(textInput, id)
+        } else if (itemKey === "kick") {
+            api.kickPlayer(textInput, "Admin kick you!")
+        }
+    }
 };
 function onPlayerAltAction(id) {
-    if (api.getHeldItem(id)?.attributes.customDisplayName == 'Dragon Sword' && api.getHeldItem(Id)?.name == 'Knight Sword') {
+    if (api.getHeldItem(id)?.attributes.customDisplayName == 'Dragon Sword' && api.getHeldItem(id)?.name == 'Knight Sword') {
         api.applyEffect(id, "Damage", 5000, { inbuiltLevel: 30 })
         api.applyEffect(id, "Speed", 5000, { inbuiltLevel: 3 })
         api.applyEffect(id, "Damage Reduction", 5000, { inbuiltLevel: 30 })
