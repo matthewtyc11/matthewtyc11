@@ -8,4 +8,4 @@ function playerCommand(id, command) {
             let item = parts.slice(1).join(" ")
             api.giveItem(id, item)
         }
- }}
+ }} 

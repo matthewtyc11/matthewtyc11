@@ -1,8 +1,7 @@
-isNewLobby = true
 canSpawnBoss1 = false
 boss1Reward = false
 admins = ["MattDragon64", "Chrishellnah", "CN_Coolwind", "Cantplaylol", "Shine_Star_Light"]
-betaPlayers = ["PoliteCowboy7327349", "Y_KILL_ME_O3O_87", 'Handsomedragonnn']
+betaPlayers = ["PoliteCowboy7327349"]
 lobbyOpen = false
 const cmdBlockStorePos = { itemProbability: [-7, 5, -7], itemAttributes: [-7, 5, -5] }
 tpCmd = { "japan": [310, 2, -200], "adminroom": [-2, 5, 0], "oldlobby": [-127, 2, 138], "train": [-111, 9, 51], "boss": [41, 24, 82], "map1": [84, 2, 37], "storage": [0, -10, 0], "spawn": [-268.5, 50, 412.5], "shop": [-255, 46, 412], "lobby outside": [-284, 46, 412], "map3": [400, 1, 630] }
@@ -11,8 +10,8 @@ const blockNameToTier = { "Red Concrete Slab": 5, "Gray Concrete Slab": 1, "Blue
 const configOfChest = []
 chestOpenedTime = {}
 const lobbyCord = [-268.5, 50, 412.5]
-onPlayerJoin = (id) => {
-    if (!(lobbyOpen || admins.includes(api.getEntityName(id)) || betaPlayers.includes(api.getEntityName(id)))) {
+function onPlayerJoin(id) {
+    if (lobbyOpen || admins.includes(api.getEntityName(id)) || betaPlayers.includes(api.getEntityName(id))) {
         api.kickPlayer(id, "Lobby not open yet! You can join after the game is complete.")
     }
     api.broadcastMessage([{ str: "[Bloxd-Loot-Fight] ", style: { color: "gold" } }, { str: api.getEntityName(id), style: { color: "Cyan" } }, { str: " Hi!", style: { color: "Lime" } }])
@@ -25,31 +24,16 @@ onPlayerJoin = (id) => {
             lastPosition: item?.attributes?.customAttributes?.lastPosition || [-268.5, 50, 412.5]
         }
     })
-    if (!isNewLobby) {
-        api.setClientOption(id, "invincible", false)
-        if (admins.includes(api.getEntityName(id))) {
-            loadAdminConsole(id)
-            loadTpConsole(id)
-        }
-        try { api.getPlayerIds().forEach(plrId => api.setCantPickUpItem(plrId, itemId1)) } catch { }
-        try { api.getPlayerIds().forEach(plrId => api.setCantPickUpItem(plrId, itemId2)) } catch { }
+
+    api.setClientOption(id, "invincible", false)
+    if (admins.includes(api.getEntityName(id))) {
+        loadAdminConsole(id)
+        loadTpConsole(id)
     }
-    if (isNewLobby) {
-        api.setClientOption(id, "invincible", true)
-        let plrPos = api.getPosition(id)
-        if (!(plrPos[0] < 2 && plrPos[0] > -1 && plrPos[1] < 7 && plrPos[1] >= 5 && plrPos[2] < 8 && plrPos[2] > 5))
-            api.setMoonstoneChestItemSlot(id, 5, "Code Block", 1, {
-                customDisplayName: "Data Store",
-                customDescription: "Stores user data",
-                customAttributes: {
-                    lastPosition: api.getPosition(id)
-                }
-            })
-        api.setPosition(id, 0.5, 5, 6.5)
-    }
+    try { api.getPlayerIds().forEach(plrId => api.setCantPickUpItem(plrId, itemId1)) } catch { }
+    try { api.getPlayerIds().forEach(plrId => api.setCantPickUpItem(plrId, itemId2)) } catch { }
 }
-onPlayerChat = (id, cmd) => {
-    if (isNewLobby) { return }
+function onPlayerChat(id, cmd) {
     let parts = cmd.split(" ")
     if (parts[0] === "!lobby" && api.getPosition(id)[1] < -8) {
         api.setPosition(id, 0, -10, 0)
@@ -81,18 +65,7 @@ onPlayerChat = (id, cmd) => {
         return false
     }
 }
-playerCommand = (id, cmd) => {
-    if (isNewLobby) { return }
-    if (api.getPlayerIds().includes(api.getPlayerId("MattDragon64"))) {
-        api.sendMessage(api.getPlayerId("MattDragon64"), api.getEntityName(id) + ": " + cmd)
-        if (!isNewLobby) {
-            if (loadData(1) === null) {
-                saveData([], 1)
-            }
-            let data = loadData[1]
-            saveData([...loadData(1), [api.getEntityName(id), cmd]], 1)
-        }
-    }
+function playerCommand(id, cmd) {
     plrCommandFunc(id, cmd)
 }
 
@@ -113,7 +86,7 @@ onPlayerDropItem = (playerId, x, y, z, itemName, itemAmount, fromIdx) => {
     }
 }
 
-onPlayerAttemptOpenChest = (id, x, y, z, isMc, isIc) => {
+function onPlayerAttemptOpenChest(id, x, y, z, isMc, isIc) {
     let tierOfChest = blockNameToTier[api.getBlock(x, y + 1, z)]
     if (tierOfChest != undefined & !isMc & !isIc) {
         if ([x, y, z] in chestOpenedTime) {
@@ -147,7 +120,8 @@ let itemId1
 let itemId2
 let spawnItemCd = api.now()
 tick = () => {
-    if (api.now() >= lastSec + 400 && !isNewLobby && getMobNames().includes("Draugr Knight")) {
+    if (CL.isRunning) { return }
+    if (api.now() >= lastSec + 400 && getMobNames().includes("Draugr Knight")) {
         lastSec = api.now()
         let plrIds = api.getPlayerIds()
         for (let id of plrIds) {
@@ -157,11 +131,9 @@ tick = () => {
             }
         }
     }
-    if (!isNewLobby) {
-        for (let plr of api.getPlayerIds()) {
-            if (isInsideLobby(api.getPosition(plr)) && !api.getEffects(plr).includes("Speed")) {
-                api.applyEffect(plr, "Speed", null, { inbuiltLevel: 5 })
-            }
+    for (let plr of api.getPlayerIds()) {
+        if (isInsideLobby(api.getPosition(plr)) && !api.getEffects(plr).includes("Speed")) {
+            api.applyEffect(plr, "Speed", null, { inbuiltLevel: 5 })
         }
     }
     if (api.now() > spawnItemCd + 200) {
@@ -180,7 +152,7 @@ tick = () => {
         spawnItemCd = api.now()
     }
 }
-onPlayerAttemptAltAction = (id) => {
+function onPlayerAttemptAltAction(id) {
     if (api.getHeldItem(id)?.name == "Gold Spade" && api.getHeldItem(id)?.attributes.customDisplayName == "Totem Of Undying" && api.getEffects(id).includes("Totem") == false) {
         /* ---apply totem effect--- */
         api.applyEffect(id, "Totem", null, { icon: "Gold Spade" })
@@ -188,7 +160,7 @@ onPlayerAttemptAltAction = (id) => {
         api.setItemSlot(id, slot, "Air")
     }
 }
-onPlayerDamagingOtherPlayer = (attacker, victim, dmg, item) => {
+function onPlayerDamagingOtherPlayer(attacker, victim, dmg, item) {
     if (item.split(" ")[1] === "Spikes") {
         return api.getHealth(victim) * 0.1 + 35
     }
@@ -202,14 +174,14 @@ onPlayerDamagingOtherPlayer = (attacker, victim, dmg, item) => {
     }
 }
 
-onMobDamagingPlayer = (attacker, victim, dmg) => {
+function onMobDamagingPlayer(attacker, victim, dmg) {
     if (api.getHeldItem(victim)?.attributes.customDisplayName === "Totem Of Undying" && api.getHealth(victim) - dmg < 5 || api.getEffects(victim).includes('Totem')
         && api.getHealth(victim) - dmg < 5) {
         totemWork(victim)
     }
 }
 
-onPlayerKilledMob = (id, mobId) => {
+function onPlayerKilledMob(id, mobId) {
     if (api.getEntityType(mobId) === "Draugr Knight") {
         return "preventDrop"
     }
@@ -260,10 +232,6 @@ function onPlayerAltAction(id) {
         }
     }
 }
-//black jack
-bjRoom1 = {player:"",bet:""}
-bjRoom2 = {}
-
 function onPlayerLeave(id) {
     delete swordEffectCd[id]
 }

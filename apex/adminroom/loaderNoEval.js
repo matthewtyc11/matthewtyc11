@@ -1,6 +1,5 @@
 if (isNewLobby) {
     //load and save data function
-    eval(api.getBlockData(-7, 5, -1).persisted.shared.text)
     //call when totem work
     function totemWork(victim) {
         const pos = api.getPosition(victim);
@@ -115,7 +114,7 @@ if (isNewLobby) {
         }
     }
 
-    const cmdBlockStorePos = { itemProbability: [-7, 5, -7], itemAttributes: [-7, 5, -5], floatText: [-7, 5, -3] }
+    const cmdBlockStorePos = {}
     for (let key in cmdBlockStorePos) {
         let dictItem = cmdBlockStorePos[key]
         let text = api.getBlockData(dictItem[0], dictItem[1], dictItem[2]).persisted.shared.text
@@ -226,11 +225,6 @@ if (isNewLobby) {
             api.setPosition(id, tpCmd[parts[1]])
         } else if (parts[0] === "tpinfo") {
             api.log(Object.keys(tpCmd))
-        } else if (parts[0] === "invisible") {
-            switch(parts[1]){
-                case 1:
-                    api.applyEffect(id,"Invisible",null,{})
-            }
         }
     }
     isInside = (a, b, p) => p.every((v, i) => v >= Math.min(a[i], b[i]) && v <= Math.max(a[i], b[i]));

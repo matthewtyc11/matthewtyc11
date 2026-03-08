@@ -1,14 +1,60 @@
+const itemAttributes = {
+    "Sand": ["Silicon Dust", 1, 1],
+    "Glass": ["Empty Jar", 2, 1],
+    "Bone Meal": ["Paper", 10, 1],
+    "Sugar Cane Plant": ["Paper Waste", 11, 1],
+    "Wood Enchanting Table": ["Tissue ", 15, 1],
+    "Iron Ladder": ["Steel Rod", 18, 1],
+    "Engraved Andesite": ["Concrete", 20, 1],
+    "Stone Slab": ["Concrete Tile", 50, 1],
+    "Gravel": ["Metal Scrapes", 100, 1],
+    "Pumpkin Seeds": ["Used Battery", 150, 1],
+    "Glass": ["Empty Chemical Vial", 200, 1],
+    "Granite": ["Raw Copper", 600, 2],
+    "Orange Wool": ["Copper Wire", 700, 2],
+    "White Carpet": ["Encrypted Document", 750, 2],
+    "Red Carpet": ["Diplomatic Bag", 1500, 2],
+    "Light Gray Carpet": ["Classified Folder", 1600, 2],
+    "Leather Block": ["Smuggled Textiles", 1900, 2],
+    "Apple Block": ["Medical Supplies", 3000, 2],
+    "Carrot Seeds": ["Microchip", 3100, 3],
+    "Gray Carpet": ["Encrypted Hard Drive", 3200, 3],
+    "Blue Carpet": ["Military Blurprint", 3500, 3],
+    "Grant Wool": ["Stolen Masterpiece ", 3600, 3],
+    "Chili Pepper Block": ["Chemical Crystal ", 3700, 3],
+    "Magenta Ceramic": ["Royal Violet Tile", 3800, 3],
+    "Gray Concrete": ["Carbon Fiber Plate", 3999, 3],
+    "Red Concrete": ["TNT", 4000, 3],
+    "Purple Carpet": ["Experimental Tech", 6000, 4],
+    "Potion Table": ["Chemical Lab", 6500, 4],
+    "Chili Pepper Seeds": ["Lithium Vehicle Battery", 7000, 4],
+    "Block of Lapis Lazuli": ["Server Module", 8000, 4],
+    "Beacon": ["GPS Jammer", 8500, 4],
+    "Patterned Blue Glass": ["AI Memory Crystal", 9000, 4],
+    "Magma": ["Thermal Energy Cube", 9500, 4],
+    "Beacon": ["Long-Range Signal Emitter", 9500, 4],
+    "Black Carpet": ["Google Server", 10000, 5],
+    "Radar": ["Alien Signal Receiver", 12000, 5],
+    "Sponge": ["Bio-Organic Sample", 13000, 5],
+    "Emerald Ore": ["Uranium-235 Ore", 25000, 5],
+    "Block of Gold": ["Pure Gold Block", 40000, 5],
+    "Block of Emerald": ["Refined Uranium Core", 80000, 5],
+    "Bookshelf": ["Alien Data Archive", 100000, 5],
+    "Toxin Ball Block": ["Virus Strain", 399600, 5],
+    "White Chalk": ["Illegal Pills", 449500, 5],
+    "Block of Moonstone": ["Refined Moon-Core", 999000, 5]
+}
 const itemProbability = {
     1: {
-        "Sand": 1.0,
+        "Sand": 1,
         "Glass": 0.4,
-        "Bone Meal": 1.0,
+        "Bone Meal": 1,
         "Sugar Cane Plant": 0.8,
-        "Wood Enchanting Table": 1.0,
+        "Wood Enchanting Table": 1,
         "Iron Ladder": 0.7,
         "Engraved Andesite": 0.9,
-        "Stone Slab": 1.0,
-        "Gravel": 1.0,
+        "Stone Slab": 1,
+        "Gravel": 1,
         "Pumpkin Seeds": 0.7,
         "Granite": 0.23,
         "Orange Wool": 0.3,
@@ -33,7 +79,7 @@ const itemProbability = {
         "Pumpkin Seeds": 0.7,
         "Granite": 0.7,
         "Orange Wool": 0.8,
-        "White Carpet": 1.0,
+        "White Carpet": 1,
         "Red Carpet": 0.8,
         "Light Gray Carpet": 0.8,
         "Leather Block": 0.9,
@@ -62,13 +108,17 @@ const itemProbability = {
         "Leather Block": 0.8,
         "Apple Block": 0.9,
         "Carrot Seeds": 0.8,
-        "Gray Carpet": 1.0,
+        "Gray Carpet": 1,
         "Blue Carpet": 0.7,
         "Grant Wool": 0.6,
         "Chili Pepper Block": 0.8,
-        "Purple Carpet": 0.5,
+        "Magenta Ceramic": 0.5,
+        "Gray Concrete": 0.6,
+        "Red Concrete": 0.7,
+        "Purple Carpet": 0.15,
+        "Potion Table": 0.1,
         "Chili Pepper Seeds": 0.15,
-        "Block of Lapis Lazuli": 0.2,
+        "Block of Lapis Lazuli": 0.1,
         "Beacon": 0.1,
         "Patterned Blue Glass": 0.01,
         "Black Carpet": 0.005
@@ -94,14 +144,21 @@ const itemProbability = {
         "Blue Carpet": 0.1,
         "Grant Wool": 0.7,
         "Chili Pepper Block": 0.8,
+        "Magenta Ceramic": 0.6,
+        "Gray Concrete": 0.6,
+        "Red Concrete": 0.7,
         "Purple Carpet": 0.9,
+        "Potion Table": 0.7,
         "Chili Pepper Seeds": 0.9,
         "Block of Lapis Lazuli": 0.9,
-        "Beacon": 0.5,
+        "Beacon": 0.4,
         "Patterned Blue Glass": 0.4,
+        "Magma": 0.5,
         "Black Carpet": 0.15,
         "Radar": 0.1,
-        "Sponge": 0.01
+        "Sponge": 0.01,
+        "Emerald Ore": 0.01,
+        "Block of Gold": 0.01
     },
     5: {
         "Light Gray Carpet": 0.05,
@@ -112,199 +169,30 @@ const itemProbability = {
         "Blue Carpet": 0.1,
         "Grant Wool": 0.07,
         "Chili Pepper Block": 0.1,
+        "Magenta Ceramic": 0.1,
+        "Gray Concrete": 0.1,
+        "Red Concrete": 0.1,
         "Purple Carpet": 0.7,
+        "Potion Table": 0.6,
         "Chili Pepper Seeds": 0.6,
         "Block of Lapis Lazuli": 0.9,
-        "Beacon": 0.8,
+        "Beacon": 0.7,
         "Patterned Blue Glass": 0.8,
+        "Magma": 0.8,
         "Black Carpet": 0.6,
         "Radar": 0.5,
         "Sponge": 0.4,
         "Emerald Ore": 0.3,
+        "Block of Gold": 0.2,
         "Block of Emerald": 0.2,
+        "Bookshelf": 0.2,
         "Toxin Ball Block": 0.2,
         "White Chalk": 0.01,
         "Block of Moonstone": 0.005
     }
 }
-const itemAttributes = {
-    "Sand": [
-        "Silicon Dust",
-        1,
-        1
-    ],
-    "Glass": [
-        "Empty Chemical Vial",
-        200,
-        1
-    ],
-    "Bone Meal": [
-        "Paper",
-        10,
-        1
-    ],
-    "Sugar Cane Plant": [
-        "Paper Waste",
-        11,
-        1
-    ],
-    "Wood Enchanting Table": [
-        "Tissue ",
-        15,
-        1
-    ],
-    "Iron Ladder": [
-        "Steel Rod",
-        18,
-        1
-    ],
-    "Engraved Andesite": [
-        "Concrete",
-        20,
-        1
-    ],
-    "Stone Slab": [
-        "Concrete Tile",
-        50,
-        1
-    ],
-    "Gravel": [
-        "Metal Scrapes",
-        100,
-        1
-    ],
-    "Pumpkin Seeds": [
-        "Used Battery",
-        150,
-        1
-    ],
-    "Granite": [
-        "Raw Copper",
-        600,
-        2
-    ],
-    "Orange Wool": [
-        "Copper Wire",
-        700,
-        2
-    ],
-    "White Carpet": [
-        "Encrypted Document",
-        750,
-        2
-    ],
-    "Red Carpet": [
-        "Diplomatic Bag",
-        1500,
-        2
-    ],
-    "Light Gray Carpet": [
-        "Classified Folder",
-        1600,
-        2
-    ],
-    "Leather Block": [
-        "Smuggled Textiles",
-        1900,
-        2
-    ],
-    "Apple Block": [
-        "Medical Supplies",
-        3000,
-        3
-    ],
-    "Carrot Seeds": [
-        "Microchip",
-        3100,
-        3
-    ],
-    "Gray Carpet": [
-        "Encrypted Hard Drive",
-        3200,
-        3
-    ],
-    "Blue Carpet": [
-        "Military Blurprint",
-        5000,
-        3
-    ],
-    "Grant Wool": [
-        "Stolen Masterpiece ",
-        5500,
-        3
-    ],
-    "Chili Pepper Block": [
-        "Chemical Crystal ",
-        6000,
-        3
-    ],
-    "Purple Carpet": [
-        "Experimental Tech",
-        8000,
-        4
-    ],
-    "Chili Pepper Seeds": [
-        "Lithium Vehicle Battery",
-        9000,
-        4
-    ],
-    "Block of Lapis Lazuli": [
-        "Server Module",
-        10000,
-        4
-    ],
-    "Beacon": [
-        "GPS Jammer",
-        15000,
-        4
-    ],
-    "Patterned Blue Glass": [
-        "AI Memory Crystal",
-        20000,
-        4
-    ],
-    "Black Carpet": [
-        "Google Server",
-        35000,
-        5
-    ],
-    "Radar": [
-        "Alien Signal Receiver",
-        50000,
-        5
-    ],
-    "Sponge": [
-        "Bio-Organic Sample",
-        60000,
-        5
-    ],
-    "Emerald Ore": [
-        "Uranium-235 Ore",
-        80000,
-        5
-    ],
-    "Block of Emerald": [
-        "Refined Uranium Core",
-        100000,
-        5
-    ],
-    "Toxin Ball Block": [
-        "Virus Strain",
-        120000,
-        5
-    ],
-    "White Chalk": [
-        "Illegal Drug",
-        250000,
-        5
-    ],
-    "Block of Moonstone": [
-        "Refined Moon-Core",
-        500000,
-        5
-    ]
-}
 const floatText = [{ text: "Map 1", size: 200, height: 4, color: "#00FFFF", cord: [-307.5, 45, 400.5] },
 { text: "Shop", size: 200, height: 4, color: "#0000FF", cord: [-255.5, 44, 412.5] },
 { text: "Map 2", size: 200, height: 4, color: "#FF0000", cord: [-308.5, 45, 406.5] },
-{ text: "Storage", size: 200, height: 4, color: "#45EBDB", cord: [-273.5, 45, 438.5] }]
+{ text: "Storage", size: 200, height: 4, color: "#45EBDB", cord: [-273.5, 45, 438.5] },
+{ text: "Map3", size: 200, height: 4, color: "#00FF00", cord: [] }]
