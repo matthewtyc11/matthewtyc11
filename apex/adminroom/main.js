@@ -17,6 +17,9 @@ onPlayerJoin = (id) => {
     }
     api.broadcastMessage([{ str: "[Bloxd-Loot-Fight] ", style: { color: "gold" } }, { str: api.getEntityName(id), style: { color: "Cyan" } }, { str: " Hi!", style: { color: "Lime" } }])
     api.setClientOption(id, "canCraft", false)
+    if (api.isInsideRect(api.getPosition(id)), [], []) {
+        api.setPosition(id, -315.5, 46, 383.5)
+    }
     const item = api.getMoonstoneChestItemSlot(id, 5)
     api.setMoonstoneChestItemSlot(id, 5, "Code Block", 1, {
         customDisplayName: "Data Store",
@@ -261,9 +264,54 @@ function onPlayerAltAction(id) {
     }
 }
 //black jack
-bjRoom1 = {player:"",bet:""}
-bjRoom2 = {}
+bjRoom = {
+    1: {
+        bet: 8,
+        playerHands: { 1: [], 2: [] },
+        dealerHand: [],
+        shoes: [],
+        gameStarted: false,
+        handPlaying: 1,
+        doubled: { 1: false, 2: false },
+        id: null
+    },
+    2: {
+        bet: 8,
+        playerHands: { 1: [], 2: [] },
+        dealerHand: [],
+        shoes: [],
+        gameStarted: false,
+        handPlaying: 1,
+        doubled: { 1: false, 2: false },
+        id: null
+    }
+};
 
 function onPlayerLeave(id) {
     delete swordEffectCd[id]
+    [1, 2].forEach(i => {
+        if (bjRoom[i].id === id) {
+            bjRoom[i].id = null
+        }
+    })
 }
+const notAllowed = ["Moonstone Explosive", "RPG", "Super RPG", "Grenade Launcher", "Moonstone Remote Explosive", "Bouncy Bomb", "Lucky Block", "Ultra Lucky Block"];
+let playerStates = {}; // id -> { active: bool, timer: number }
+
+onInventoryUpdated = (playerId) => {
+    for (const item of notAllowed) {
+        if (
+            api.getInventoryItemAmount(playerId, item) > 0 &&
+            !admins.includes(api.getEntityName(playerId))
+        ) {
+            api.removeItemName(
+                playerId,
+                item,
+                api.getInventoryItemAmount(playerId, item)
+            );
+            let name = api.getEntityName(playerId);
+            let warning = `${name}，「${item}」that's too dangerous, I'll help u keep it`;
+            api.broadcastMessage(warning, { color: "Gold" });
+        }
+    }
+};

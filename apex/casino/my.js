@@ -1,9 +1,9 @@
-bjRoom = { 1: { bets: { 1: 8, 2: 8 }, playerHands: { 1: [], 2: [] }, dealerHand: [], shoes: [], gameStarted: false, handPlaying: 1 } }
+bjRoom = { 1: { bet: 8, playerHands: { 1: [], 2: [] }, dealerHand: [], shoes: [], gameStarted: false, handPlaying: 1, doubled: { 1: false, 2: false } } }
 
 const numberOfDecks = 6
 const dealerHitsSoft17 = false
 const reshufflePenetration = 52
-const blackjackPayout = 1.5
+const blackjackPayout = 1.52
 function createShoe(decks) {
     api.log("created")
     let ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
@@ -53,16 +53,20 @@ function canSplit(hand) {
     }
     return cardValue(hand[0]) === cardValue(hand[1])
 }
-function dealerPlay(shoe, dealer) {
+function dealerPlay(room) {
+    let thisRoom = bjRoom[room]
+    let shoes = thisRoom.shoes
+    let dealerHand = thisRoom.dealerHand
     while (true) {
-        let total, soft = handTotal(dealer)
+        let [total, soft] = handTotal(dealerHand)
         if (total <= 17) {
-            dealer.push(draw(shoe))
+            dealerHand.push(shoes.pop())
             continue
         }
         if (total === 17 && soft && dealerHitsSoft17) {
-            dealer.push(draw(shoe))
+            dealerHand.push(shoes.pop())
         }
+        thisRoom.gameStarted = false
         break
     }
 }
@@ -75,8 +79,32 @@ function outputInBoard(playerHands, dealerHand, reveal = false, room) {
     api.setBlockData(-314, 56, 380, { persisted: { shared: { text: `Your\nFirst Hand:\n${playerHands[1].join(", ")}\n(Total ${handTotal(playerHands[1])[0]})`, "textSize": 0 } } });
     api.setBlockData(-315, 56, 380, { persisted: { shared: { text: `Your\nSecond Hand:\n${playerHands[2].join(", ")}\n(Total ${handTotal(playerHands[2])[0]})`, "textSize": 0 } } });
 }
-function bjRestart(room) {
-
+function bjEnd(id, room) {
+    let thisRoom = bjRoom[room]
+    let playerHands = thisRoom.playerHands
+    let dealerHand = thisRoom.dealerHand
+    let bet = thisRoom.bet
+    let doubled = thisRoom.doubled
+    if (handTotal(playerHands[1])[0] === handTotal(dealerHand)[0]) {
+        api.sendMessage(id, "You tie with the dealer on your first hand")
+        api.giveItem(id, "Raw Gold", bet * (1 + doubled[1]))
+    } else if (handTotal(playerHands[1])[0] > handTotal(dealerHand)[0]) {
+        api.sendMessage(id, "You win on your first hand")
+        api.giveItem(id, "Raw Gold", (doubled[1] + 1) * bet * 2)
+    } else if (handTotal(playerHands[1])[0] < handTotal(dealerHand)[0]) {
+        bjLost(id, room)
+    }
+    if (playerHands[2]) {
+        if (handTotal(playerHands[2])[0] === handTotal(dealerHand)[0]) {
+            api.sendMessage(id, "You tie with the dealer on your second hand")
+            api.giveItem(id, "Raw Gold", bet * (1 + doubled[2]))
+        } else if (handTotal(playerHands[2])[0] > handTotal(dealerHand)[0]) {
+            api.sendMessage(id, "You win on your first hand")
+            api.giveItem(id, "Raw Gold", (doubled[2] + 1) * bet * 2)
+        } else if (handTotal(playerHands[2])[0] < handTotal(dealerHand)[0]) {
+            bjLost(id, room)
+        }
+    }
 }
 function bjLost(id, room) {
     let thisRoom = bjRoom[room]
@@ -130,10 +158,37 @@ function bjDouble(id, room) {
     }
     let shoes = thisRoom.shoes
     let plrHands = thisRoom.playerHands
-
+    let handPlaying = thisRoom.handPlaying
+    if (plrHands[handPlaying].length < 2) {
+        api.sendMessage(id, "You are not allow to double now.")
+    }
+    thisRoom.doubled[handPlaying] = true
+    api.removeItemName(id, "Raw Gold", bet)
+    if (!playerHands[2]) {
+        await bjHit()
+        dealerPlay()
+    } else if (handPlaying === 1) {
+        await bjHit()
+        thisRoom.handPlaying = 2
+    } else {
+        await bjHit()
+        dealerPlay()
+    }
 }
-function bjStand() {
-
+function bjStand(id, room) {
+    let thisRoom = bjRoom[room]
+    if (!thisRoom.gameStarted) {
+        api.sendMessage(id, "Game not yet started, press the start button.")
+        return
+    }
+    let plrHands = thisRoom.playerHands
+    if (!plrHands[2]) {
+        dealerPlay()
+    } else if (thisRoom.handPlaying === 1) {
+        thisRoom.handPlaying = 2
+    } else {
+        dealerPlay()
+    }
 }
 function bjHit(id, room) {
     let thisRoom = bjRoom[room]
