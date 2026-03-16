@@ -3,7 +3,7 @@ canSpawnBoss1 = false
 boss1Reward = false
 admins = ["MattDragon64", "Chrishellnah", "CN_Coolwind", "Cantplaylol", "Shine_Star_Light"]
 betaPlayers = ["PoliteCowboy7327349", "Y_KILL_ME_O3O_87", 'Handsomedragonnn']
-lobbyOpen = false
+lobbyOpen = true
 const cmdBlockStorePos = { itemProbability: [-7, 5, -7], itemAttributes: [-7, 5, -5] }
 tpCmd = { "japan": [310, 2, -200], "adminroom": [-2, 5, 0], "oldlobby": [-127, 2, 138], "train": [-111, 9, 51], "boss": [41, 24, 82], "map1": [84, 2, 37], "storage": [0, -10, 0], "spawn": [-268.5, 50, 412.5], "shop": [-255, 46, 412], "lobby outside": [-284, 46, 412], "map3": [400, 1, 630] }
 const cdTimeInMs = 120000
@@ -17,7 +17,7 @@ onPlayerJoin = (id) => {
     }
     api.broadcastMessage([{ str: "[Bloxd-Loot-Fight] ", style: { color: "gold" } }, { str: api.getEntityName(id), style: { color: "Cyan" } }, { str: " Hi!", style: { color: "Lime" } }])
     api.setClientOption(id, "canCraft", false)
-    if (api.isInsideRect(api.getPosition(id)), [], []) {
+    if (api.isInsideRect(api.getPosition(id), [-320, 61, 386], [-312, 54, 380])) {
         api.setPosition(id, -315.5, 46, 383.5)
     }
     const item = api.getMoonstoneChestItemSlot(id, 5)
@@ -53,49 +53,11 @@ onPlayerJoin = (id) => {
 }
 onPlayerChat = (id, cmd) => {
     if (isNewLobby) { return }
-    let parts = cmd.split(" ")
-    if (parts[0] === "!lobby" && api.getPosition(id)[1] < -8) {
-        api.setPosition(id, 0, -10, 0)
-    }
-    if (parts[0] === "!room") {
-        let myRoom = loadData(0).data[api.getPlayerDbId(id)]
-        if (parts[1] === undefined) {
-            if (myRoom) {
-                api.sendMessage(id, "The room you own:\n" + myRoom)
-                return false
-            } else {
-                api.sendMessage(id, "You don't have any room.")
-                return false
-            }
-        }
-        if (myRoom && myRoom.length > 1) {
-            if (myRoom.includes(Number(parts[1]))) {
-                let data = loadData(0)
-                data.roomChoose[api.getPlayerDbId(id)] = Number(parts[1])
-                saveData(data, 0)
-            } else {
-                api.sendMessage(id, "You do not own this room.\nThe room you own\n" + myRoom, { color: "red" })
-            }
-        } else {
-            api.sendMessage(id, "You need to own at least 2 storage room.")
-        }
-    }
-    if (cmd[0] === "!") {
-        return false
-    }
+    return plrChatFunc(id, cmd)
+    if (cmd[0] === "!") { return false }
 }
 playerCommand = (id, cmd) => {
     if (isNewLobby) { return }
-    if (api.getPlayerIds().includes(api.getPlayerId("MattDragon64"))) {
-        api.sendMessage(api.getPlayerId("MattDragon64"), api.getEntityName(id) + ": " + cmd)
-        if (!isNewLobby) {
-            if (loadData(1) === null) {
-                saveData([], 1)
-            }
-            let data = loadData[1]
-            saveData([...loadData(1), [api.getEntityName(id), cmd]], 1)
-        }
-    }
     plrCommandFunc(id, cmd)
 }
 
@@ -288,7 +250,7 @@ bjRoom = {
 };
 
 function onPlayerLeave(id) {
-    delete swordEffectCd[id]
+    delete swordEffectCd[id];
     [1, 2].forEach(i => {
         if (bjRoom[i].id === id) {
             bjRoom[i].id = null
@@ -310,7 +272,7 @@ onInventoryUpdated = (playerId) => {
                 api.getInventoryItemAmount(playerId, item)
             );
             let name = api.getEntityName(playerId);
-            let warning = `${name}，「${item}」that's too dangerous, I'll help u keep it`;
+            let warning = `${name},「${item}」that's too dangerous, I'll help u keep it`;
             api.broadcastMessage(warning, { color: "Gold" });
         }
     }

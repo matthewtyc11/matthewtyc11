@@ -171,6 +171,13 @@ if (isNewLobby) {
             description: "Tp to you instantly",
             userInput: { type: "player" }
         })
+        api.createShopItemForPlayer(id, "admin", "mute", {
+            image: "selectPlayerIcon.png",
+            buyButtonText: "Mute",
+            customTitle: "Mute a idiot",
+            description: "He thinks he is talking but no one can hear",
+            userInput: { type: "player" }
+        })
     }
     function loadTpConsole(id) {
         api.configureShopCategoryForPlayer(id, 'tp', {
@@ -186,6 +193,20 @@ if (isNewLobby) {
                 description: "Tp to here"
             });
         }
+    }
+    function loadFlyConsole(id) {
+        api.configureShopCategoryForPlayer(id, "fly", {
+            autoSelectCategory: true,
+            customTitle: "Fly",
+            sortPriority: 200,
+        })
+        api.createShopItemForPlayer(id, "fly", "fly", {
+            image: "selectPlayerIcon.png",
+            buyButtonText: "Choose",
+            customTitle: "Fly",
+            description: "Fly when you want",
+            userInput: { type: "player" }
+        })
     }
     function plrCommandFunc(id, cmd) {
         let parts = cmd.split(" ")
@@ -227,11 +248,71 @@ if (isNewLobby) {
         } else if (parts[0] === "tpinfo") {
             api.log(Object.keys(tpCmd))
         } else if (parts[0] === "invisible") {
-            switch(parts[1]){
-                case 1:
-                    api.applyEffect(id,"Invisible",null,{})
+            if (api.getPlayerEffects(id).includes("Invisible")) {
+                api.removeEffect(id, "Invisible")
+            } else {
+                api.applyEffect(id, "Invisible", null, {})
             }
         }
+    }
+    const banList = ["copy", "leave", "coping"]
+    function chatFilter(input) {
+        let normalized = input.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const leetMap = {
+            '1': 'i', '3': 'e', '4': 'a', '0': 'o', '5': 's',
+            '7': 't', '8': 'b', '@': 'a', '$': 's'
+        };
+        let translated = normalized.split('')
+            .map(char => leetMap[char] || char)
+            .join('');
+
+        for (const word of banList) {
+            // Creates a pattern that allows for repeated letters (e.g., "coooopy")
+            const pattern = new RegExp(word.split('').join('+') + '+', 'gi');
+            if (pattern.test(translated)) {
+                return true
+            }
+        }
+        return false
+    }
+    function plrChatFunc(id, cmd) {
+        let parts = cmd.split(" ")
+        if (parts[0] === "!lobby" && api.getPosition(id)[1] < -8) {
+            api.setPosition(id, 0, -10, 0)
+        }
+        if (parts[0] === "!room") {
+            let myRoom = loadData(0).data[api.getPlayerDbId(id)]
+            if (parts[1] === undefined) {
+                if (myRoom) {
+                    api.sendMessage(id, "The room you own:\n" + myRoom)
+                    return false
+                } else {
+                    api.sendMessage(id, "You don't have any room.")
+                    return false
+                }
+            }
+            if (myRoom && myRoom.length > 1) {
+                if (myRoom.includes(Number(parts[1]))) {
+                    let data = loadData(0)
+                    data.roomChoose[api.getPlayerDbId(id)] = Number(parts[1])
+                    saveData(data, 0)
+                } else {
+                    api.sendMessage(id, "You do not own this room.\nThe room you own\n" + myRoom, { color: "red" })
+                }
+            } else {
+                api.sendMessage(id, "You need to own at least 2 storage room.")
+            }
+        }
+        if (chatFilter(cmd)) {
+            api.sendMessage(id, [{ str: api.getEntityName(id) + ": ", style: { color: "#DFF8FF" } }, { str: cmd }])
+            admins.forEach(admin => {
+                try {
+                    api.sendMessage(api.getPlayerId(admin), api.getEntityName(id) + ": " + cmd, { color: "red" })
+                } catch { }
+            })
+            return false
+        }
+        return true
     }
     isInside = (a, b, p) => p.every((v, i) => v >= Math.min(a[i], b[i]) && v <= Math.max(a[i], b[i]));
     isInsideLobby = (plrPos) => (isInside([-186, 499], [-358, 327], [plrPos[0], plrPos[2]]) || plrPos[1] < -8);

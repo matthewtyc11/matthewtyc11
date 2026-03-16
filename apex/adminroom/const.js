@@ -195,4 +195,4 @@ const floatText = [{ text: "Map 1", size: 200, height: 4, color: "#00FFFF", cord
 { text: "Shop", size: 200, height: 4, color: "#0000FF", cord: [-255.5, 44, 412.5] },
 { text: "Map 2", size: 200, height: 4, color: "#FF0000", cord: [-308.5, 45, 406.5] },
 { text: "Storage", size: 200, height: 4, color: "#45EBDB", cord: [-273.5, 45, 438.5] },
-{ text: "Map3", size: 200, height: 4, color: "#00FF00", cord: [] }]
+{ text: "Map3", size: 200, height: 4, color: "#00FF00", cord: [-309.5, 45, 412.5] }]
