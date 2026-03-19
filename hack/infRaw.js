@@ -38,9 +38,9 @@ window.addEventListener('keydown', async (event) => {
                 //noa.entities.setPosition(1, [9.5, 37, -16.5])
                 for (let i = 0; i < 3; i++) {
                     inputs.down._events?.['primary-fire']?.(0);
-                    await wait(40);
+                    await wait(35);
                     inputs.up._events?.['primary-fire']?.(0);
-                    await wait(40);
+                    await wait(35);
                 }
             }
             noa.inputs.up._events?.['primary-fire']?.(0);
