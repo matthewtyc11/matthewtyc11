@@ -88,12 +88,12 @@ function onPlayerAttemptOpenChest(myId, x, y, z, ismoon) {
         if (isBig) {
             for (let yOffset = 0; yOffset < 3; yOffset++) {
                 for (let zOffset = 0; zOffset < 3; zOffset++) {
-                    output.push([xBig, yStart + 4 * (plrNum % 3) + yOffset, z - 4 * Math.floor(playerNumber / 3) - zOffset])
+                    output.push([xBig, yStart + 4 * (plrNum % 3) + yOffset, z - 4 * Math.floor(plrNum / 3) - zOffset])
                 }
             }
         } else {
             for (let yOffset = 0; yOffset < 3; yOffset++) {
-                output.push([xBig, yStart + 4 * (plrNum % 3) + yOffset, z - 4 * Math.floor(playerNumber / 3) - 1])
+                output.push([xBig, yStart + 4 * (plrNum % 3) + yOffset, z - 4 * Math.floor(plrNum / 3) - 1])
             }
         }
         return output
@@ -105,6 +105,7 @@ function onPlayerAttemptOpenChest(myId, x, y, z, ismoon) {
     }
     if ((x === xBig || x === xSmall) && y >= yStart && y <= yStart + 10) {
         const plrName = api.getEntityName(myId)
+        if (typeof bigStorage === "undefined" || typeof smallStorage === "undefined") { return warning(myId) }
         if (bigStorage.has(plrName)) {
             if (!getPlayerChestPos(bigStorage.get(plrName), true).includes([x, y, z])) {
                 return warning(myId)
