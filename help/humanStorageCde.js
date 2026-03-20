@@ -166,13 +166,13 @@ let warning = (id) => {
     return "preventOpen"
 }
 if ((x === xBig || x === xSmall) && y >= yStart && y <= yStart + 10) {
-    const plrName = api.getEntityName(id)
+    const plrName = api.getEntityName(myId)
     if (bigStorage.has(plrName)) {
-        if (!getPlayerChestPos(bigStorage.get(playerName), true).includes([x, y, z])) {
+        if (!getPlayerChestPos(bigStorage.get(plrName), true).includes([x, y, z])) {
             return warning(myId)
         }
     } else if (smallStorage.has(plrName)) {
-        if (!getPlayerChestPos(smallStorage.get(playerName), false).includes([x, y, z])) {
+        if (!getPlayerChestPos(smallStorage.get(plrName), false).includes([x, y, z])) {
             return warning(myId)
         }
     } else {
