@@ -179,3 +179,5 @@ if ((x === xBig || x === xSmall) && y >= yStart && y <= yStart + 10) {
         return warning(myId)
     }
 }
+
+

@@ -100,7 +100,7 @@ function onPlayerAttemptOpenChest(myId, x, y, z, ismoon) {
     }
     function warning(id) {
         api.kickPlayer(id, "Suspicious Action Detected! Don't steal storage!")
-        api.broadcastMessage(api.getEntityName(id) + " is trying to steal storage!", { color: "red" })
+        api.broadcastMessage(api.getEntityName(id) + " is trying to steal storage!\nPlz take a screenshot and report at boxim", { color: "red" })
         return "preventOpen"
     }
     if ((x === xBig || x === xSmall) && y >= yStart && y <= yStart + 10) {
