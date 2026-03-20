@@ -150,12 +150,12 @@ function getPlayerChestPos(plrNum, isBig) {
     if (isBig) {
         for (let yOffset = 0; yOffset < 3; yOffset++) {
             for (let zOffset = 0; zOffset < 3; zOffset++) {
-                output.push([xBig, yStart + 4 * (plrNum % 3) + yOffset, z - 4 * Math.floor(playerNumber / 3) - zOffset])
+                output.push([xBig, yStart + 4 * (plrNum % 3) + yOffset, zStart - 4 * Math.floor(playerNumber / 3) - zOffset])
             }
         }
     } else {
         for (let yOffset = 0; yOffset < 3; yOffset++) {
-            output.push([xBig, yStart + 4 * (plrNum % 3) + yOffset, z - 4 * Math.floor(playerNumber / 3) - 1])
+            output.push([xBig, yStart + 4 * (plrNum % 3) + yOffset, zStart - 4 * Math.floor(playerNumber / 3) - 1])
         }
     }
     return output

@@ -79,21 +79,20 @@ onPlayerJoin = (Id, reset) => {
         api.broadcastMessage([{ str: "[服务器] ", style: { color: "gold" } }, { str: name, style: { color: "white" } }, { str: " 你好呀!", style: { color: "gold" } }])
     }
 }
-
 function onPlayerAttemptOpenChest(myId, x, y, z, ismoon) {
     cuteSnLootChest(myId, x, y, z, ismoon)
-    const [xBig, xSmall, yStart, zStart] = [16, 46, 7, -44]
+    const [xBig, xSmall, yStart, zStart] = [16, 46, 7, -45]
     function getPlayerChestPos(plrNum, isBig) {
         let output = []
         if (isBig) {
             for (let yOffset = 0; yOffset < 3; yOffset++) {
                 for (let zOffset = 0; zOffset < 3; zOffset++) {
-                    output.push([xBig, yStart + 4 * (plrNum % 3) + yOffset, z - 4 * Math.floor(plrNum / 3) - zOffset])
+                    output.push([xBig, yStart + 4 * (plrNum % 3) + yOffset, zStart - 4 * Math.floor(plrNum / 3) - zOffset])
                 }
             }
         } else {
             for (let yOffset = 0; yOffset < 3; yOffset++) {
-                output.push([xBig, yStart + 4 * (plrNum % 3) + yOffset, z - 4 * Math.floor(plrNum / 3) - 1])
+                output.push([xSmall, yStart + 4 * (plrNum % 3) + yOffset, zStart - 4 * Math.floor(plrNum / 3) - 1])
             }
         }
         return output
@@ -105,21 +104,34 @@ function onPlayerAttemptOpenChest(myId, x, y, z, ismoon) {
     }
     if ((x === xBig || x === xSmall) && y >= yStart && y <= yStart + 10) {
         const plrName = api.getEntityName(myId)
-        if (typeof bigStorage === "undefined" || typeof smallStorage === "undefined") { return warning(myId) }
+        if (typeof bigStorage === "undefined" || typeof smallStorage === "undefined") {
+            return warning(myId)
+        }
         if (bigStorage.has(plrName)) {
-            if (!getPlayerChestPos(bigStorage.get(plrName), true).includes([x, y, z])) {
-                return warning(myId)
+            let plrNum = bigStorage.get(plrName)
+            for (let yOffset = 0; yOffset < 3; yOffset++) {
+                for (let zOffset = 0; zOffset < 3; zOffset++) {
+                    if (JSON.stringify([xBig, yStart + 4 * (plrNum % 3) + yOffset, zStart - 4 * Math.floor(plrNum / 3) - zOffset]) === JSON.stringify([x, y, z])) {
+                        return true
+                    }
+                }
             }
+            return warning(myId)
         } else if (smallStorage.has(plrName)) {
-            if (!getPlayerChestPos(smallStorage.get(plrName), false).includes([x, y, z])) {
-                return warning(myId)
+            let plrNum = smallStorage.get(plrName)
+            for (let yOffset = 0; yOffset < 3; yOffset++) {
+                for (let zOffset = 0; zOffset < 3; zOffset++) {
+                    if (JSON.stringify([xSmall, yStart + 4 * (plrNum % 3) + yOffset, zStart - 4 * Math.floor(plrNum / 3) - zOffset]) === JSON.stringify([x, y, z])) {
+                        return true
+                    }
+                }
             }
+            return warning(myId)
         } else {
             return warning(myId)
         }
     }
 }
-
 onPlayerKilledMob = (pId, mobId, damageDealt, withItem) => {
     cuteSnBossdrop(pId, mobId, damageDealt, withItem)
     return "preventDrop"
