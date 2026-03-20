@@ -40,7 +40,7 @@ window.addEventListener('keydown', async (event) => {
                     inputs.down._events?.['primary-fire']?.(0);
                     await wait(35);
                     inputs.up._events?.['primary-fire']?.(0);
-                    await wait(35);
+                    await wait(40);
                 }
             }
             noa.inputs.up._events?.['primary-fire']?.(0);

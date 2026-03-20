@@ -26,10 +26,10 @@ window.addEventListener('keydown', (event) => {
     const yAdd = 0
     const pos = noa.entities.getState(1, "position").position
     if (event.key.toLowerCase() === 'h') {
-        noa.entities.setPosition(1, [20 + xAdd, 7 + yAdd, pos[2]]);
-
-        // Optional: log to console to confirm it fired
-        console.log("Entity teleported!");
+        // storage noa.entities.setPosition(1, [20 + xAdd, 7 + yAdd, pos[2]]);
+        //steal code noa.entities.setPosition(1,[pos[0], 20 , 12.5])
+        //hit card noa.entities.setPosition(1, [18.5, 19, 5.5])
+        noa.entities.setPosition(1,[])
     }
 });
 
