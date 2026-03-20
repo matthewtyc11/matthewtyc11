@@ -168,14 +168,14 @@ let warning = (id) => {
 if ((x === xBig || x === xSmall) && y >= yStart && y <= yStart + 10) {
     const plrName = api.getEntityName(id)
     if (bigStorage.has(plrName)) {
-        if (!getPlayerChestPos(bigStorage.get(playerName), true).includes(x, y, z)) {
-            warning(myId)
+        if (!getPlayerChestPos(bigStorage.get(playerName), true).includes([x, y, z])) {
+            return warning(myId)
         }
     } else if (smallStorage.has(plrName)) {
-        if (!getPlayerChestPos(smallStorage.get(playerName), false).includes(x, y, z)) {
-            warning(myId)
+        if (!getPlayerChestPos(smallStorage.get(playerName), false).includes([x, y, z])) {
+            return warning(myId)
         }
     } else {
-        warning(myId)
+        return warning(myId)
     }
 }
