@@ -165,19 +165,17 @@ let warning = (id) => {
     api.broadcastMessage(api.getEntityName(id) + " is trying to steal storage!", { color: "red" })
     return "preventOpen"
 }
-function onPlayerAttemptOpenChest(id, x, y, z, isMC, isIC) {
-    if ((x === xBig || x === xSmall) && y >= yStart && y <= yStart + 10) {
-        const plrName = api.getEntityName(id)
-        if (bigStorage.has(plrName)) {
-            if (!getPlayerChestPos(bigStorage.get(playerName), true).includes(x, y, z)) {
-                warning(id)
-            }
-        } else if (smallStorage.has(plrName)) {
-            if (!getPlayerChestPos(smallStorage.get(playerName), true).includes(x, y, z)) {
-                warning(id)
-            }
-        } else {
-            warning(id)
+if ((x === xBig || x === xSmall) && y >= yStart && y <= yStart + 10) {
+    const plrName = api.getEntityName(id)
+    if (bigStorage.has(plrName)) {
+        if (!getPlayerChestPos(bigStorage.get(playerName), true).includes(x, y, z)) {
+            warning(myId)
         }
+    } else if (smallStorage.has(plrName)) {
+        if (!getPlayerChestPos(smallStorage.get(playerName), false).includes(x, y, z)) {
+            warning(myId)
+        }
+    } else {
+        warning(myId)
     }
 }
