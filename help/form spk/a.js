@@ -1,16 +1,14 @@
-function cuteSnInitializePlayer() {
-    api.removeEffect(myId, "Poisoned")
-    api.removeEffect(myId, "Weakness")
-    api.removeEffect(myId, "Slowness")
-    api.removeEffect(myId, "Radiation")
-    api.setClientOption(myId, 'cameraTint', null)
-    api.setClientOption(myId, 'canSeeNametagsThroughWalls', false)
-    api.setClientOption(myId, 'canCraft', false)
-    api.setClientOption(myId, 'dealingDamageHeadMultiplier', 1.75)
-    api.setClientOption(myId, 'dealingDamageDefaultMultiplier', 1)
-    delete playerTimers[myId];
-    api.setClientOption(myId, "middleTextUpper", "");
-}
+api.removeEffect(myId, "Weakness")
+api.removeEffect(myId, "Slowness")
+api.removeEffect(myId, "Radiation")
+api.setClientOption(myId, 'cameraTint', null)
+api.setClientOption(myId, 'canSeeNametagsThroughWalls', false)
+api.setClientOption(myId, 'canCraft', false)
+api.setClientOption(myId, 'dealingDamageHeadMultiplier', 1.75)
+api.setClientOption(myId, 'dealingDamageDefaultMultiplier', 1)
+delete playerTimers[myId];
+api.setClientOption(myId, "middleTextUpper", "");
+
 function cuteSnDefinePlayerIDs() {
     cuteSnPID_Sna = "co0TcMa_dUj-ptp3roIUO"
     cuteSnPID_Spk = "7suj05XsPJls2W6ACDDbt"
@@ -34,19 +32,17 @@ function cuteSnDefinePlayerIDs() {
     cuteSnPID_Voi = "PoNlTtTCv6k4YFvC8iRZr"
     cuteSnPID_Sha = "273UfIqI1EKNvhzRtLpJc"
     cuteSnPID_Loo = "I6kNcUX8I5BHpEUzQ4eZp"
-    cuteSnPID_Mat = "ELnRiFcvav1YRmC6sYcrX"
 }
 function cuteSnInitializeServer() {
     //Department Heads
     BestPerson = [cuteSnPID_Sna]
-    BestCoder = [cuteSnPID_Mat]
     HumanResources = [cuteSnPID_Sna, cuteSnPID_Spk]
     StoragePerson = [cuteSnPID_Sna, cuteSnPID_Ext]
     //Specialists
     BugFinder = [cuteSnPID_Ilo, "DIO____"]
     AntiTheft = ["cuteSnPID_Sne"]
     Builder = [cuteSnPID_Dra, cuteSnPID_Voi, cuteSnPID_Sha, "magfanstar", "CN_CangBai"]
-    Creator = [cuteSnPID_Iva, "XD_superkaikai_XD", "CN_Zhao"]
+    Creator = [cuteSnPID_Iva, "XD_superkaikai_XD"]
     //Player Department
     Advertisor = ["qinxiaochen_IlIlIl"]
     Auditor = [cuteSnPID_Cnd, "yuhuachen7952998china"]
@@ -58,7 +54,6 @@ function cuteSnInitializeServer() {
     PrisonManagement = []
     Investigator = [cuteSnPID_Sun, cuteSnPID_Chn]
     TrialMod = [cuteSnPID_Chr, "Chinesexiaohao", "Jayden_UwU1320870", "china_T_T_Dream"]
-    OtherMod = []
     //Others
     Cat2 = ["XD_superkaikai_XD"]
     Cat = ["rtbbyst"]
@@ -117,14 +112,6 @@ function cuteSnOwnerCostume(Id) {
     api.updateEntityNodeMeshAttachment(Id, "HeadMesh", "BloxdBlock", { blockName: "Patterned Pink Glass", size: 0.7, meshOffset: [0, 0, 0] }, [0, 0.3, 0], [0, 0, 0])
     api.updateEntityNodeMeshAttachment(Id, "ArmRightMesh", "BloxdBlock", { blockName: "Magenta Ceramic", size: 0.4, meshOffset: [0, 0, 0] }, [-0.1, 0, 0], [0, 0, 0])
     api.updateEntityNodeMeshAttachment(Id, "ArmLeftMesh", "BloxdBlock", { blockName: "Magenta Ceramic", size: 0.4, meshOffset: [0, 0, 0] }, [0.1, 0, 0], [0, 0, 0])
-}
-function bestCoderCostume(Id) {
-    api.updateEntityNodeMeshAttachment(Id, "TorsoNode", "BloxdBlock", { blockName: "Maple Leaves", size: 0.5, meshOffset: [0, 0, 0] }, [0, 0.38, 0], [0, 0, 0])
-    api.updateEntityNodeMeshAttachment(Id, "HeadMesh", "BloxdBlock", { blockName: "Blue Glass", size: 0.7, meshOffset: [0, 0, 0] }, [0, 0.3, 0], [0, 0, 0])
-    api.updateEntityNodeMeshAttachment(Id, "ArmRightMesh", "BloxdBlock", { blockName: "Blue Ceramic", size: 0.4, meshOffset: [0, 0, 0] }, [-0.1, 0, 0], [0, 0, 0])
-    api.updateEntityNodeMeshAttachment(Id, "ArmLeftMesh", "BloxdBlock", { blockName: "Blue Ceramic", size: 0.4, meshOffset: [0, 0, 0] }, [0.1, 0, 0], [0, 0, 0])
-    api.updateEntityNodeMeshAttachment(Id, "LegLeftMesh", "BloxdBlock", { blockName: "Block of Diamond", size: 0.3, meshOffset: [0, 0, 0] }, [0, -0.7, 0], [0, 0, 0])
-    api.updateEntityNodeMeshAttachment(Id, "LegRightMesh", "BloxdBlock", { blockName: "Block of Diamond", size: 0.3, meshOffset: [0, 0, 0] }, [0, -0.7, 0], [0, 0, 0])
 }
 cuteSnDefinePlayerIDs()
 cuteSnInitializeServer()

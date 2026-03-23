@@ -55,7 +55,6 @@ function onInventoryUpdated(playerId) {
 function tick(ms) {
     cuteSnChatTips()
     cuteSnEscapeTimer()
-    cuteSnChatSayText()
     cuteSnCustomProjectile()
     cuteSnMusic()
     cuteSnLaserEffect()
