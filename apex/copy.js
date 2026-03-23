@@ -233,7 +233,7 @@ function setChestItem(ChestChance, GunChance, myId, x, y, z) {
 			})
 			l = Number(l) + Number(1)
 		}
-	}
+	} 
 }
 //4.1.6 清除箱子
 function ClearChestItem(myId, x, y, z) {
