@@ -164,7 +164,7 @@ let warning = (id) => {
     api.kickPlayer(id, "Suspicious Action Detected! Don't steal storage!")
     api.broadcastMessage(api.getEntityName(id) + " is trying to steal storage!", { color: "red" })
     return "preventOpen"
-}
+}              
 if ((x === xBig || x === xSmall) && y >= yStart && y <= yStart + 10) {
     const plrName = api.getEntityName(myId)
     if (bigStorage.has(plrName)) {
