@@ -34,13 +34,15 @@ window.addEventListener('keydown', async (event) => {
             _noaLoopRunning = true;
             const inputs = noa.inputs;
             while (_noaToggleRun) {
-                noa.entities.setPosition(1, [64.5, 51, 190.5]);
-                //noa.entities.setPosition(1, [9.5, 37, -16.5])
+                //raw noa.entities.setPosition(1, [64.5, 51, 190.5]);
+                //card 
+            noa.entities.setPosition(1, [9.5, 37, -16.5])
+                //spin noa.entities.setPosition(1,[14.5,37,-13.5])
                 for (let i = 0; i < 3; i++) {
                     inputs.down._events?.['primary-fire']?.(0);
                     await wait(35);
                     inputs.up._events?.['primary-fire']?.(0);
-                    await wait(40);
+                    await wait(35);
                 }
             }
             noa.inputs.up._events?.['primary-fire']?.(0);

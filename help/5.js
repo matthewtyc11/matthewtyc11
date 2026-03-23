@@ -12,7 +12,7 @@ GetGameItem_GearEnchantment2 = ["{\"Protection\":20,\"Health\":30,\"Health Regen
 for (const thing of GetGameItem_GearEnchantment2) {
     GetGameItem_GearEnchantment.push(thing)
 }
-
+ 
 function getGameItem(Id, ItemList) {
     for (let i = 0; i < Math.floor(ItemList.length / 2); i++) {
         const ThingId = ItemList[2 * i];
